@@ -19,7 +19,7 @@ export default function FatwaHeader() {
         <Link href="/fatwas/upload">
           <Button className="gap-2">
             <Plus className="w-4 h-4" />
-            Add Question
+            Add Fatwa
           </Button>
         </Link>
       </div>

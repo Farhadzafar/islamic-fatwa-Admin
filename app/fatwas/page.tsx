@@ -1,11 +1,22 @@
 import FatwaHeader from "@/components/fatwas/FatwaHeader";
 import StatsGrid from "@/components/questions/StatsGrid";
 import React from "react";
-import { getStats, getFatwas } from "@/lib/data/fatwa";
+import {
+  getStats,
+  getFatwas,
+  getCategories,
+  getLanguages,
+  getStatuses,
+} from "@/lib/data/fatwa";
 import FatwaCard from "@/components/fatwas/FatwaCard";
+import FatwaFiltersCard from "@/components/fatwas/FatwaFiltersCard";
+import { FatwaPagination } from "@/components/fatwas/FatwaPagination";
 
 const stats = await getStats();
 const rawFatwas = await getFatwas();
+const categories = await getCategories();
+const languages = await getLanguages();
+const statuses = await getStatuses();
 const fatwas = rawFatwas.map((fatwa: any) => ({
   ...fatwa,
   date: fatwa.date ?? "", // Provide a default value or map from the correct field
@@ -16,8 +27,19 @@ export default function FatwasPage() {
     <div className="space-y-8 p-8">
       <FatwaHeader />
       <StatsGrid stats={stats} />
+      <FatwaFiltersCard
+        categories={categories}
+        languages={languages}
+        statuses={statuses}
+      />
       <hr />
       <FatwaCard fatwas={fatwas} />
+      <div className=" w-full flex justify-between mt-4">
+        {/* Pagination component can be added here */}
+
+        <p>show 1-20 from 1390</p>
+        <FatwaPagination />
+      </div>
     </div>
   );
 }

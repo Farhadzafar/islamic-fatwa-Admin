@@ -226,3 +226,31 @@ export async function getStats() {
     },
   ];
 }
+
+export async function getCategories() {
+  return [
+    { name: "Fiqh", count: 500 },
+    { name: "Aqeedah", count: 300 },
+    { name: "History", count: 200 },
+    { name: "Islamic Law", count: 150 },
+    { name: "Ethics", count: 100 },
+    { name: "Islamic Finance", count: 50 },
+  ];
+}
+
+export async function getStatuses() {
+  return [
+    { label: "All", value: "all" },
+    { label: "Published", value: "published" },
+    { label: "Pending", value: "pending" },
+    { label: "Draft", value: "draft" },
+  ];
+}
+
+export async function getLanguages() {
+  return [
+    { name: "English", code: "en" },
+    { name: "Arabic", code: "ar" },
+    { name: "Pashto", code: "ps" },
+  ];
+}
