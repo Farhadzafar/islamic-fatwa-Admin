@@ -13,23 +13,38 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  GitPullRequestCreateIcon,
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Fatwas", href: "/fatwas", icon: LayoutDashboard },
-  { name: "Content", href: "/content", icon: BookOpen },
-  { name: "Questions", href: "/questions", icon: FileQuestion },
-  { name: "Users", href: "/users", icon: Users },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Fatwas", href: "/admin/fatwas", icon: GitPullRequestCreateIcon },
+  { name: "Contents", href: "/admin/contents", icon: BookOpen },
+  { name: "Questions", href: "/admin/questions", icon: FileQuestion },
+  { name: "Users", href: "/admin/users", icon: Users },
+  { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
-export default function Sidebar() {
+type User = {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  image: string;
+};
+
+interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
+  user: User | null;
+}
+export default function Sidebar({ open, onClose, user }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
 
   const isActive = (path: string) =>
-    path === "/" ? pathname === "/" : pathname.startsWith(path);
+    path === "/admin" ? pathname === "/admin" : pathname.startsWith(path);
 
   return (
     <aside
@@ -40,7 +55,10 @@ export default function Sidebar() {
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="h-16 flex items-center justify-between px-4 border-b">
-          <Link href="/" className="flex items-center gap-2 overflow-hidden">
+          <Link
+            href="/admin"
+            className="flex items-center gap-2 overflow-hidden"
+          >
             <BookOpen className="w-6 h-6 text-primary" />
             {!collapsed && (
               <span className="font-bold text-xl">Admin Panel</span>
@@ -85,15 +103,15 @@ export default function Sidebar() {
         <div className="p-4 border-t">
           <div className="flex items-center gap-3 overflow-hidden">
             <img
-              src="https://ui-avatars.com/api/?name=Admin+User&background=random"
+              src={user?.image || "/default-avatar.png"}
               alt="Admin"
               className="w-10 h-10 rounded-full"
             />
             {!collapsed && (
               <>
                 <div className="flex-1">
-                  <p className="font-medium">Admin User</p>
-                  <p className="text-sm text-gray-500">admin@example.com</p>
+                  <p className="font-medium">{user?.firstName}</p>
+                  <p className="text-sm text-gray-500">{user?.email}</p>
                 </div>
                 <Button variant="ghost" size="icon">
                   <ChevronDown className="w-4 h-4" />

@@ -1,165 +1,230 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectItem } from "@/components/ui/select";
+import {
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+} from "@radix-ui/react-select";
+import { cn } from "@/lib/utils";
 
-import { useState } from "react";
+const selectStyles = cn(
+  "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+  "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+  "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+);
 
-const initialState = {
-  len: "",
-  title: "",
-  description: "",
-  category: "",
-  tags: [] as string[],
-  status: "",
-  mezhab: "",
-  fatwaBy: "",
-  views: 0,
-  likes: 0,
-  verified: false,
-  reference: [] as string[],
-  data: "",
-};
+const fatwaSchema = z.object({
+  len: z.string().min(2, { message: "Language code required" }),
+  title: z.string().min(2, { message: "Title required" }),
+  description: z.string().min(20, { message: "Description required" }),
+  category: z.string(),
+  tags: z.array(z.string()).min(1, { message: "At least one tag required" }),
+  status: z.enum(["publish", "pending", "draft"]),
+  mezhab: z.string(),
+  fatwaBy: z.string().min(2, { message: "Fatwa By required" }),
+  verified: z.boolean(),
+  reference: z.array(
+    z.string().min(1, { message: "At least one reference required" })
+  ),
+});
 
 export default function FatwaForm() {
-  const [form, setForm] = useState(initialState);
+  const form = useForm<z.infer<typeof fatwaSchema>>({
+    resolver: zodResolver(fatwaSchema),
+    defaultValues: {
+      len: "en",
+      title: "",
+      description: "",
+      category: "",
+      tags: [],
+      status: "publish",
+      mezhab: "",
+      fatwaBy: "",
+      verified: false,
+      reference: [""],
+    },
+  });
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value, type } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    }));
-  };
-
-  const handleArrayChange = (name: string, value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      [name]: value.split(",").map((v) => v.trim()),
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(form);
-  };
+  function onSubmit(values: z.infer<typeof fatwaSchema>) {
+    console.log(values);
+  }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-2xl space-y-6"
-    >
-      <h2 className="text-2xl font-bold text-gray-800">Add New Fatwa</h2>
+    <div className="max-w-6xl mx-auto mt-10 p-8 border border-gray-100">
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+        Submit a New Fatwa
+      </h2>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 text-xl"
+          autoComplete="off"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="len"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Language</FormLabel>
+                  <FormControl>
+                    <select {...field} className={selectStyles}>
+                      <option value="en">English</option>
+                      <option value="ar">Arabic</option>
+                      <option value="ps">Pashto</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="mezhab"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mezhab</FormLabel>
+                  <FormControl>
+                    <select {...field} className={selectStyles}>
+                      <option value="Hanafi">Hanafi</option>
+                      <option value="Maliki">Maliki</option>
+                      <option value="Shafi">Shafi</option>
+                      <option value="Hanbali">Hanbali</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Fiqh" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          name="len"
-          placeholder="Length"
-          value={form.len}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          name="title"
-          placeholder="Title"
-          value={form.title}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          name="category"
-          placeholder="Category"
-          value={form.category}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          name="status"
-          placeholder="Status"
-          value={form.status}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          name="mezhab"
-          placeholder="Mezhab"
-          value={form.mezhab}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          name="fatwaBy"
-          placeholder="Fatwa By"
-          value={form.fatwaBy}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          name="views"
-          type="number"
-          placeholder="Views"
-          value={form.views}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          name="likes"
-          type="number"
-          placeholder="Likes"
-          value={form.likes}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          name="data"
-          type="date"
-          value={form.data}
-          onChange={handleChange}
-          className="input"
-        />
-      </div>
+            <FormField
+              control={form.control}
+              name="fatwaBy"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Fatwa By</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ahmad" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={form.description}
-        onChange={handleChange}
-        className="input w-full h-24"
-      />
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Title..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <input
-        name="tags"
-        placeholder="Tags (comma separated)"
-        onChange={(e) => handleArrayChange("tags", e.target.value)}
-        className="input w-full"
-      />
-
-      <input
-        name="reference"
-        placeholder="References (comma separated)"
-        onChange={(e) => handleArrayChange("reference", e.target.value)}
-        className="input w-full"
-      />
-
-      <label className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          name="verified"
-          checked={form.verified}
-          onChange={handleChange}
-          className="form-checkbox"
-        />
-        <span className="text-gray-700">Verified</span>
-      </label>
-
-      <button
-        type="submit"
-        className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
-      >
-        Submit
-      </button>
-    </form>
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Description..."
+                    {...field}
+                    className="textarea textarea-bordered min-h-[100px]"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags (comma separated)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Prayer, Travel, Fiqh"
+                      value={field.value.join(",")}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value.split(",").map((tag) => tag.trim())
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="reference"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>References (comma separated URLs)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://example.com/reference1, https://example.com/reference2"
+                      value={field.value.join(",")}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value.split(",").map((ref) => ref.trim())
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              className="btn btn-primary px-8 py-2 rounded-lg shadow hover:shadow-lg transition"
+            >
+              Submit
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 }

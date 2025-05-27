@@ -1,4 +1,5 @@
 // app/fatwa/new/page.tsx (Server Component)
+import MultiStepFatwaForm from "@/components/fatwas/fatwa-form/multi-step-fatwa-form";
 import FatwaForm from "@/components/fatwas/FatwaForm";
 import dynamic from "next/dynamic";
 
@@ -9,7 +10,8 @@ import dynamic from "next/dynamic";
 export default function NewFatwaPage() {
   return (
     <main className="p-8">
-      <FatwaForm />
+      {/* <FatwaForm /> */}
+      <MultiStepFatwaForm />
     </main>
   );
 }

@@ -4,7 +4,8 @@ import "./globals.css";
 
 import Sidebar from "@/components/layout/Sidebar";
 import MobileHeader from "@/components/layout/MobileHeader";
-
+import { AuthProvider } from "@/providers/auth-provider";
+import { Toaster } from "@/components/ui/toaster";
 // Optional: configure font classes
 const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"], weight: ["400"] });
@@ -24,12 +25,8 @@ export default function AdminLayout({
       <body
         className={`${geist.className} ${geistMono.className} min-h-screen bg-gray-50`}
       >
-        <Sidebar />
-        <MobileHeader />
-
-        <main className="min-h-screen lg:pl-64 transition-all duration-200">
-          <div className="py-20 lg:py-8 px-4 max-w-7xl mx-auto">{children}</div>
-        </main>
+        <AuthProvider>{children}</AuthProvider>
+        <Toaster />
       </body>
     </html>
   );
