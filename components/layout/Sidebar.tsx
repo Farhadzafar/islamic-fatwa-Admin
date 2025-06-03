@@ -14,12 +14,20 @@ import {
   ChevronRight,
   ChevronDown,
   GitPullRequestCreateIcon,
+  AlignVerticalDistributeStart,
+  Microscope,
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Fatwas", href: "/admin/fatwas", icon: GitPullRequestCreateIcon },
-  { name: "Contents", href: "/admin/contents", icon: BookOpen },
+  { name: "Books", href: "/admin/books", icon: BookOpen },
+  {
+    name: "Articles",
+    href: "/admin/articles",
+    icon: AlignVerticalDistributeStart,
+  },
+  { name: "Research", href: "/admin/research", icon: Microscope },
   { name: "Questions", href: "/admin/questions", icon: FileQuestion },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Settings", href: "/admin/settings", icon: Settings },
@@ -27,10 +35,9 @@ const navigation = [
 
 type User = {
   id: number;
-  username: string;
+  fullName: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  role: string;
   image: string;
 };
 
@@ -42,6 +49,7 @@ interface SidebarProps {
 export default function Sidebar({ open, onClose, user }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  console.log("Sidebar user:", user?.email);
 
   const isActive = (path: string) =>
     path === "/admin" ? pathname === "/admin" : pathname.startsWith(path);
@@ -103,14 +111,18 @@ export default function Sidebar({ open, onClose, user }: SidebarProps) {
         <div className="p-4 border-t">
           <div className="flex items-center gap-3 overflow-hidden">
             <img
-              src={user?.image || "/default-avatar.png"}
+              src={
+                user?.image ||
+                "https://ui-avatars.com/api/?name=Abdullah+Ahmad&background=random"
+              }
               alt="Admin"
               className="w-10 h-10 rounded-full"
             />
+
             {!collapsed && (
               <>
                 <div className="flex-1">
-                  <p className="font-medium">{user?.firstName}</p>
+                  <p className="font-medium">{user?.fullName}</p>
                   <p className="text-sm text-gray-500">{user?.email}</p>
                 </div>
                 <Button variant="ghost" size="icon">

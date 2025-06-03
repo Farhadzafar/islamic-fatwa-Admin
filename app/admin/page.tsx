@@ -5,8 +5,8 @@ import QuestionsAnalyticsChart from "@/components/dashboard/charts/QuestionsAnal
 import NotificationsList from "@/components/dashboard/notifications/NotificationsList";
 import CategoryPieChart from "@/components/dashboard/charts/CategoryPieChart";
 import UserActivityChart from "@/components/dashboard/charts/UserActivityChart";
-import BooksGrid from "@/components/dashboard/books/BooksGrid";
-import ResearchPapersList from "@/components/dashboard/research/ResearchPapersList";
+import BooksGrid from "@/components/books/BooksGrid";
+import ResearchPapersList from "@/components/research/ResearchPapersList";
 
 // Sample Data Imports (you can move these to constants/data files later)
 import {

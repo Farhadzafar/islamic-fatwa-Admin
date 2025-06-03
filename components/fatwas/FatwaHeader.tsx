@@ -16,7 +16,7 @@ export default function FatwaHeader() {
           <Download className="w-4 h-4" />
           Export
         </Button>
-        <Link href="/fatwas/upload">
+        <Link href="/admin/fatwas/upload">
           <Button className="gap-2">
             <Plus className="w-4 h-4" />
             Add Fatwa

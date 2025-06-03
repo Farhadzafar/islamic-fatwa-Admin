@@ -3,18 +3,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import Sidebar from "@/components/layout/Sidebar";
-import MobileHeader from "@/components/layout/MobileHeader";
-
 type User = {
   id: number;
-  username: string;
+  fullName: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
   image: string;
   token: string;
+  role: "admin" | "user";
+  createdAt: string;
 };
 
 type AuthContextType = {
@@ -41,11 +37,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
+  console.log("12321 user in auth provider", user?.email);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(JSON.parse(storedUser).user);
     }
     setIsLoading(false);
   }, []);
@@ -70,17 +67,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [user, pathname, isLoading, router, toast]);
 
-  const login = async (username: string, password: string) => {
-    const url = `https://final-year-backend-project.onrender.com/api/users//login`;
+  const login = async (email: string, password: string) => {
+    const url = `https://final-year-backend-project.onrender.com/api/users/login`;
     try {
       setIsLoading(true);
-      const response = await fetch("https://dummyjson.com/auth/login", {
-        // const response = await fetch(url, {
+      // const response = await fetch("https://dummyjson.com/auth/login", {
+      const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
-      console.log("❤️❤️❤️ the the response", url);
+      // console.log("❤️❤️❤️ the the response", url);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -96,7 +93,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const userData = await response.json();
       console.log("❤️❤️❤️ the the response data", userData);
-      setUser(userData);
+      setUser(userData.user);
+      console.log("❤️❤️❤️ the user data", user);
       localStorage.setItem("user", JSON.stringify(userData));
       toast({
         title: "Login successful",
