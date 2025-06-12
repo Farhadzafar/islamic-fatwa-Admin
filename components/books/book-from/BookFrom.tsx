@@ -102,6 +102,7 @@ export default function BookForm() {
                       <option value="maliki">Maliki</option>
                       <option value="shafi">Shafi</option>
                       <option value="hanbali">Hanbali</option>
+                      <option value="null">Null</option>
                     </select>
                   </FormControl>
                 </FormItem>
@@ -115,15 +116,7 @@ export default function BookForm() {
                 <FormItem>
                   <FormLabel>Book Category</FormLabel>
                   <FormControl>
-                    <select {...field} className={selectStyle}>
-                      <option value="">Select category</option>
-                      <option value="quran">Quran</option>
-                      <option value="hadith">Hadith</option>
-                      <option value="history">History</option>
-                      <option value="literature">Islamic Literature</option>
-                      <option value="islamic_history">Islamic History</option>
-                      <option value="other">Other</option>
-                    </select>
+                    <Input placeholder="Enter book category" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -138,7 +131,16 @@ export default function BookForm() {
                 <FormItem>
                   <FormLabel>Book Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter book title" {...field} />
+                    <Input
+                      placeholder="Enter book title"
+                      {...field}
+                      dir={form.watch("language") === "en" ? "ltr" : "rtl"}
+                      className={`${
+                        form.watch("language") === "en"
+                          ? "text-left"
+                          : "text-right"
+                      }`}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -151,7 +153,16 @@ export default function BookForm() {
                 <FormItem>
                   <FormLabel>Book Summary</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Enter book summary..." {...field} />
+                    <Textarea
+                      placeholder="Enter book summary..."
+                      {...field}
+                      dir={form.watch("language") === "en" ? "ltr" : "rtl"}
+                      className={` h-72 ${
+                        form.watch("language") === "en"
+                          ? "text-left"
+                          : "text-right"
+                      }`}
+                    />
                   </FormControl>
                 </FormItem>
               )}
