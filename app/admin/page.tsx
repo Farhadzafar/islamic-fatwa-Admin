@@ -7,8 +7,6 @@ import CategoryPieChart from "@/components/dashboard/charts/CategoryPieChart";
 import UserActivityChart from "@/components/dashboard/charts/UserActivityChart";
 import BooksGrid from "@/components/books/BooksGrid";
 import ResearchPapersList from "@/components/research/ResearchPapersList";
-
-// Sample Data Imports (you can move these to constants/data files later)
 import {
   areaChartData,
   pieChartData,
@@ -19,6 +17,9 @@ import {
   recentBooks,
   researchPapers,
 } from "@/constants/data";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export default function AdminDashboard() {
   return (
@@ -40,7 +41,26 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <BooksGrid books={recentBooks} />
+      <div className="space-y-6 border px-5 py-7 rounded-lg shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-lg font-semibold">Recent Books</h2>
+            <p className="text-sm text-gray-500">
+              Latest books and publications
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Link href="/admin/books">
+              <Button variant="outline">
+                wive all
+                <ArrowRight className="w-4 h-4 mr-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <BooksGrid books={recentBooks} />
+        <BooksGrid books={recentBooks} />
+      </div>
 
       <ResearchPapersList papers={researchPapers} />
     </div>

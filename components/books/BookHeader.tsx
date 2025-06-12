@@ -1,10 +1,8 @@
-"use client";
-import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Download, Plus } from "lucide-react";
+import { Download, Plus, PlusIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function BookHeader() {
-  const [showAddForm, setShowAddForm] = useState(false);
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
@@ -18,10 +16,12 @@ export default function BookHeader() {
           <Download className="w-4 h-4" />
           Export
         </Button>
-        <Button className="gap-2" onClick={() => setShowAddForm(!showAddForm)}>
-          <Plus className="w-4 h-4" />
-          {showAddForm ? "Cancel" : "Add Content"}
-        </Button>
+        <Link href="/admin/books/upload">
+          <Button className="gap-2">
+            <PlusIcon className="w-4 h-4" />
+            Add New Book
+          </Button>
+        </Link>
       </div>
     </div>
   );
