@@ -44,7 +44,7 @@ function SidebarMobileOverlay({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-30">
       <div className="absolute inset-y-0 left-0 w-64 bg-white shadow-xl">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <div className="p-2 border-t text-right">
           <Button variant="ghost" onClick={onClose}>
             Close
