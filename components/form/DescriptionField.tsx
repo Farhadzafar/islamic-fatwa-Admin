@@ -16,28 +16,31 @@ interface DescriptionFieldProps {
 }
 
 function DescriptionField({ form, language }: DescriptionFieldProps) {
+  const isEnglish = language === "en";
+
   return (
     <FormField
       control={form.control}
-      name="description"
+      name="summary"
       render={({ field }) => (
-        <FormItem>
-          <FormLabel htmlFor="description">
-            {language === "ps" ? "تشریحات" : "Description"}
+        <FormItem dir={isEnglish ? "ltr" : "rtl"}>
+          {/* Use htmlFor matching the textarea id */}
+          <FormLabel htmlFor="summary">
+            {isEnglish ? "Description" : "تشریحات"}
           </FormLabel>
           <FormControl>
             <Textarea
-              id="description"
+              id="summary" // id matches htmlFor for accessibility
               placeholder={
-                language === "ps"
-                  ? "تشریحات دلته ولیکئ..."
-                  : "Enter description here..."
+                isEnglish
+                  ? "Enter description here..."
+                  : "تشریحات دلته ولیکئ..."
               }
               {...field}
-              dir={language === "en" ? "ltr" : "rtl"}
+              dir={isEnglish ? "ltr" : "rtl"}
               className={cn(
                 "min-h-[120px]",
-                language === "en" ? "text-left" : "text-right"
+                isEnglish ? "text-left" : "text-right"
               )}
               autoComplete="off"
             />
