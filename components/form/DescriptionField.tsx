@@ -39,7 +39,7 @@ function DescriptionField({ form, language }: DescriptionFieldProps) {
               {...field}
               dir={isEnglish ? "ltr" : "rtl"}
               className={cn(
-                "min-h-[120px]",
+                "min-h-[320px]",
                 isEnglish ? "text-left" : "text-right"
               )}
               autoComplete="off"

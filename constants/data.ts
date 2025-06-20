@@ -249,3 +249,78 @@ export const researchPapers = [
     publishDate: "2024-01-20",
   },
 ];
+
+export const articles = [
+  {
+    id: "article-1",
+    title: "AI in Healthcare: Opportunities and Challenges",
+    excerpt:
+      "Artificial Intelligence is transforming healthcare in profound ways. This article explores the benefits, risks, and ethical implications.",
+    image:
+      "https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=2776&auto=format&fit=crop",
+    category: "Technology",
+    status: "Featured",
+    author: {
+      name: "Dr. Sarah Khan",
+      role: "Medical Researcher",
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+      institution: "Stanford Health Institute",
+    },
+    tags: ["AI", "Healthcare", "Ethics"],
+    readTime: "6 min read",
+    publishDate: "2025-03-15",
+    views: 1284,
+    likes: 314,
+    metrics: {
+      comments: 24,
+    },
+  },
+  {
+    id: "article-2",
+    title: "Climate Change and Its Global Economic Impact",
+    excerpt:
+      "Climate change is more than an environmental crisis — it’s also an economic challenge affecting global markets and industries.",
+    image:
+      "https://images.unsplash.com/photo-1606819717115-9159c900370b?q=80&w=2940&auto=format&fit=crop",
+    category: "Environment",
+    status: "Trending",
+    author: {
+      name: "John Weaver",
+      role: "Environmental Economist",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+      institution: "World Policy Center",
+    },
+    tags: ["Climate", "Economics", "Sustainability"],
+    readTime: "8 min read",
+    publishDate: "2025-04-02",
+    views: 2421,
+    likes: 501,
+    metrics: {
+      comments: 45,
+    },
+  },
+  {
+    id: "article-3",
+    title: "The Rise of Remote Work: A New Era for Productivity",
+    excerpt:
+      "Remote work has redefined how companies function and employees engage. Discover the tools and strategies enabling this revolution.",
+    image:
+      "https://images.unsplash.com/photo-1506806732259-39c2d0268443?q=80&w=2940&auto=format&fit=crop",
+    category: "Business",
+    status: "New",
+    author: {
+      name: "Emily Zhang",
+      role: "Workplace Strategist",
+      avatar: "https://randomuser.me/api/portraits/women/65.jpg",
+      institution: "Global Business Insights",
+    },
+    tags: ["Remote", "Productivity", "Future of Work"],
+    readTime: "5 min read",
+    publishDate: "2025-01-20",
+    views: 1640,
+    likes: 289,
+    metrics: {
+      comments: 33,
+    },
+  },
+];

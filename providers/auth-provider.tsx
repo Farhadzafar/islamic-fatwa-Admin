@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
-  console.log("12321 user in auth provider", user?.email);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -53,6 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Allow access to auth pages when logged out
       if (!user && pathname.startsWith("/admin")) {
         router.push("/auth/login");
+
         toast({
           title: "Authentication required",
           description: "Please login to access this page",
@@ -77,7 +77,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      // console.log("❤️❤️❤️ the the response", url);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -92,9 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       const userData = await response.json();
-      console.log("❤️❤️❤️ the the response data", userData);
       setUser(userData.user);
-      console.log("❤️❤️❤️ the user data", user);
       localStorage.setItem("user", JSON.stringify(userData));
       toast({
         title: "Login successful",

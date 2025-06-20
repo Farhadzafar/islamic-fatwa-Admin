@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { fatwaSchema } from "./fatwaSchama";
+import { articleSchema } from "./ArticleSchama";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { number, z } from "zod";
 import {
   Form,
   FormControl,
@@ -22,7 +22,6 @@ import ImageFileField from "@/components/form/ImageFileField";
 import CategoryField from "@/components/form/CategoryField";
 import RichTextEditorField from "../form/TextEditorField";
 import { useSearchParams } from "next/navigation";
-import { z } from "zod";
 
 export default function ArticleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,19 +35,20 @@ export default function ArticleForm() {
 
   const defaultValues = {
     title: "",
-    author: "khan",
+    author: "farhad",
     content: "",
+    coverImage: undefined as File | undefined,
     category: "",
     madhab: "",
     language: `${lang}`,
     readTime: "",
   };
-  const form = useForm<z.infer<typeof fatwaSchema>>({
-    resolver: zodResolver(fatwaSchema),
+  const form = useForm<z.infer<typeof articleSchema>>({
+    resolver: zodResolver(articleSchema),
     defaultValues: defaultValues,
   });
 
-  const onSubmit = async (values: z.infer<typeof fatwaSchema>) => {
+  const onSubmit = async (values: z.infer<typeof articleSchema>) => {
     setIsSubmitting(true);
     console.log("Form submitted with values:", values);
 
@@ -62,9 +62,9 @@ export default function ArticleForm() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Fatwa Upload Form</h1>
+      <h1 className="text-2xl font-bold mb-4">Book Upload Form</h1>
       <p className="text-sm text-gray-500 mb-4">
-        Please fill out the form below to upload a new fatwa. All fields are
+        Please fill out the form below to upload a new book. All fields are
         required.
       </p>
       <Form {...form}>
@@ -111,6 +111,8 @@ export default function ArticleForm() {
           </div>
 
           <div className="flex justify-between items-end">
+            <ImageFileField form={form} language={language} name="coverImage" />
+
             <Button
               type="submit"
               disabled={isSubmitting}
@@ -124,7 +126,7 @@ export default function ArticleForm() {
               ) : (
                 <>
                   <Check className="w-4 h-4 mr-2" />
-                  Submit
+                  Submit Book
                 </>
               )}
             </Button>

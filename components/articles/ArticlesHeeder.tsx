@@ -6,28 +6,26 @@ const language = [
   {
     name: "Pashto",
     value: "ps",
-    link: "/admin/books/upload?lang=ps",
+    link: "/admin/articles/upload?lang=ps",
   },
   {
     name: "English",
     value: "en",
-    link: "/admin/books/upload?lang=en",
+    link: "/admin/articles/upload?lang=en",
   },
   {
     name: "Arabic",
     value: "ar",
-    link: "/admin/books/upload?lang=ar",
+    link: "/admin/articles/upload?lang=ar",
   },
 ];
 
-export default function BookHeader() {
+export default function ArticlesHeeder() {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-1 shadow px-4 py-3 rounded">
       <div>
-        <h1 className="text-2xl font-bold mb-1">Books Management</h1>
-        <p className="text-gray-600">
-          Manage books, articles, and research papers
-        </p>
+        <h1 className="text-2xl font-bold mb-1">Articles Management</h1>
+        <p className="text-gray-600">Manage articles</p>
       </div>
       <div className="flex items-center gap-3">
         <Button variant="outline" className="gap-2">

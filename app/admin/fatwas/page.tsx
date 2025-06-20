@@ -10,7 +10,6 @@ import {
 } from "@/lib/data/fatwa";
 import FatwaCard from "@/components/fatwas/FatwaCard";
 import FatwaFiltersCard from "@/components/fatwas/FatwaFiltersCard";
-import { FatwaPagination } from "@/components/fatwas/FatwaPagination";
 
 const stats = await getStats();
 const rawFatwas = await getFatwas();
@@ -34,12 +33,6 @@ export default function FatwasPage() {
       />
       <hr />
       <FatwaCard fatwas={fatwas} />
-      <div className=" w-full flex justify-between mt-4">
-        {/* Pagination component can be added here */}
-
-        <p>show 1-20 from 1390</p>
-        <FatwaPagination />
-      </div>
     </div>
   );
 }

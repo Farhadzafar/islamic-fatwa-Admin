@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BookSchema } from "./BookSchama";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,11 +10,11 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
-import { Check, ImageIcon, Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MadhabField from "@/components/form/MadhabField";
 import TitleField from "@/components/form/TitleField";
@@ -25,17 +25,31 @@ import PublishDateField from "@/components/form/publishDateField";
 import ImageFileField from "@/components/form/ImageFileField";
 import CategoryField from "@/components/form/CategoryField";
 import RichTextEditorField from "../form/TextEditorField";
+import { useSearchParams } from "next/navigation";
 
-const selectStyle = cn(
-  "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-  "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-  "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-);
+// const selectStyle = cn(
+//   "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+//   "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+//   "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+// );
 
 export default function BookForm() {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const searchParams = useSearchParams();
+  const lang = searchParams.get("lang") || "en"; // default to English if not set
+
+  const [language, setLanguage] = useState("");
+
+  useEffect(() => {
+    const languageMap: Record<string, string> = {
+      ps: "ps",
+      en: "en",
+      ar: "ps",
+    };
+
+    setLanguage(languageMap[lang] || "English");
+  }, [lang]);
 
   const defaultValues = {
     title: "",
@@ -46,18 +60,12 @@ export default function BookForm() {
     file: undefined as File | undefined,
     category: "",
     madhab: "",
-    language: "",
+    language: `${language}`,
   };
   const form = useForm<z.infer<typeof BookSchema>>({
     resolver: zodResolver(BookSchema),
     defaultValues: defaultValues,
   });
-
-  const language = form.watch("language");
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
 
   const onSubmit = async (values: z.infer<typeof BookSchema>) => {
     setIsSubmitting(true);
@@ -71,6 +79,7 @@ export default function BookForm() {
     form.reset(defaultValues);
     setPreview(null);
   };
+  console.log("language is ===", language);
 
   return (
     <div>
@@ -82,42 +91,51 @@ export default function BookForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-            <FormField
-              control={form.control}
-              name="language"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Book Language</FormLabel>
-                  <FormControl>
-                    <select {...field} className={selectStyle}>
-                      <option value="">Select language</option>
-                      <option value="en">English</option>
-                      <option value="ps">پښتو</option>
-                      <option value="ar">عربي</option>
-                    </select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <TitleField form={form} language={language} name="title" />
             <MadhabField form={form} language={language} name="madhab" />
 
             <CategoryField form={form} language={language} name="category" />
           </div>
 
           <div className="flex flex-col gap-2">
-            <TitleField form={form} language={language} name="title" />
-
             <DescriptionField form={form} language={language} name="summary" />
-            <RichTextEditorField
+            {/* <RichTextEditorField
               form={form}
               language={language}
               name="summary"
-            />
+            /> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
             <PdfFileField form={form} language={language} name="file" />
-
+            <FormField
+              control={form.control}
+              name="author"
+              render={({ field }) => (
+                <FormItem
+                  className="w-full"
+                  dir={language === "en" ? "ltr" : "rtl"}
+                >
+                  <FormLabel>
+                    {language === "en" ? "author" : "لیکوال"}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      dir={language === "en" ? "ltr" : "rtl"}
+                      autoComplete="off"
+                      placeholder={
+                        language === "en"
+                          ? "Enter the book title..."
+                          : "سرلیک په پښتو ژبه ولیکئ..."
+                      }
+                      className={cn("w-full")}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <PublishDateField
               form={form}
               language={language}

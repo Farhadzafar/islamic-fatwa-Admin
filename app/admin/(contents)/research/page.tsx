@@ -10,6 +10,7 @@ import {
 import BooksFiltersCard from "@/components/books/BooksFiltersCard";
 import ResearchPapersList from "@/components/research/ResearchPapersList";
 import { researchPapers } from "@/constants/data";
+import ResearchHeader from "@/components/research/ResearchHeader";
 
 export default async function page() {
   const stats = await getStats();
@@ -19,7 +20,7 @@ export default async function page() {
 
   return (
     <div className="space-y-8">
-      <BookHeader />
+      <ResearchHeader />
       <StaticCard stats={stats} />
       <BooksFiltersCard
         categories={categories}

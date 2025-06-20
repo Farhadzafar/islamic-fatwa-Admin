@@ -35,10 +35,7 @@ export default function TitleField({ form, language, name }: TitleFieldProps) {
                   ? "سرلیک په پښتو ژبه ولیکئ..."
                   : "Enter the book title..."
               }
-              className={cn(
-                "w-full text-sm border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500",
-                isPashto ? "text-right" : "text-left"
-              )}
+              className={cn("w-full")}
             />
           </FormControl>
           <FormMessage />

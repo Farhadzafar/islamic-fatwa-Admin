@@ -1,6 +1,7 @@
 // BookCard.tsx
 import { Button } from "@/components/ui/button";
 import { MoreVertical, Star, Download, Clock } from "lucide-react";
+import ActionMenu from "../share/ActionMenu";
 
 export function BookCard({ book }: { book: any }) {
   return (
@@ -12,13 +13,14 @@ export function BookCard({ book }: { book: any }) {
           className="w-full h-full object-cover"
         />
         <div className="absolute top-2 right-2">
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon"
             className="bg-white/90 hover:bg-white"
           >
             <MoreVertical className="w-4 h-4" />
-          </Button>
+          </Button>*/}
+          <ActionMenu id="124324" type="book" />
         </div>
       </div>
       <div className="p-4">
