@@ -36,7 +36,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 interface RichTextEditorFieldProps {
-  form: { control: Control<FieldValues> };
+  form: any;
   name: string;
   language: "en" | "ps" | string;
 }

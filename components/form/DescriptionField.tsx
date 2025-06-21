@@ -8,20 +8,19 @@ import {
 } from "../ui/form";
 import { Textarea } from "../ui/textarea";
 
-import { Control, FieldValues } from "react-hook-form";
-
 interface DescriptionFieldProps {
-  form: { control: Control<FieldValues> };
+  form: any;
+  name: string;
   language: string;
 }
 
-function DescriptionField({ form, language }: DescriptionFieldProps) {
+function DescriptionField({ form, language, name }: DescriptionFieldProps) {
   const isEnglish = language === "en";
 
   return (
     <FormField
       control={form.control}
-      name="summary"
+      name={name}
       render={({ field }) => (
         <FormItem dir={isEnglish ? "ltr" : "rtl"}>
           {/* Use htmlFor matching the textarea id */}

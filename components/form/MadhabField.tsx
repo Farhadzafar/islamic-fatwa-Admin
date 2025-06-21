@@ -14,14 +14,16 @@ import {
   SelectValue,
 } from "../ui/select";
 import { UseFormReturn, FieldValues } from "react-hook-form";
+import { fatwaSchema } from "../fatwas/fatwaSchama";
+import { z } from "zod";
 
-interface MadhabFieldProps<T extends FieldValues = FieldValues> {
-  form: UseFormReturn<T>;
-  language: string;
+interface Props {
+  form: any;
   name: string;
+  language: string;
 }
 
-function MadhabField({ form, language, name }: MadhabFieldProps) {
+function MadhabField({ form, language, name }: Props) {
   const madhabs = [
     {
       value: language === "ps" ? "حنفي" : "Hanafi",

@@ -12,8 +12,8 @@ import { z } from "zod";
 import { fatwaSchema } from "../fatwas/fatwaSchama";
 
 interface Props {
-  form: UseFormReturn<z.infer<typeof fatwaSchema>>;
-  name: keyof z.infer<typeof fatwaSchema>;
+  form: any;
+  name: string;
   language: string;
 }
 

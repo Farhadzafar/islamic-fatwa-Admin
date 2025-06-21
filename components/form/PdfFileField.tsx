@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { Control, FieldValues } from "react-hook-form";
 
 interface PdfFileFieldProps {
-  form: { control: Control<FieldValues> };
+  form: any;
   language: string;
   name: string;
 }

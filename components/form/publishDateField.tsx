@@ -11,7 +11,7 @@ import { Input } from "../ui/input";
 import { Control, FieldValues } from "react-hook-form";
 
 interface PublishDateFieldProps {
-  form: { control: Control<FieldValues> };
+  form: any;
   language: string;
   name: string;
 }

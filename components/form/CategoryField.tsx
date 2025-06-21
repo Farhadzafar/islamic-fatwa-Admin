@@ -6,20 +6,18 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Control, FieldValues } from "react-hook-form";
+import { Control, FieldValues, UseFormReturn } from "react-hook-form";
 import { Input } from "../ui/input";
+import { fatwaSchema } from "../fatwas/fatwaSchama";
+import { z } from "zod";
 
-interface CategoryFieldProps {
-  form: { control: Control<FieldValues> };
-  language: string;
+interface Props {
+  form: any;
   name: string;
+  language: string;
 }
 
-export default function CategoryField({
-  form,
-  language,
-  name,
-}: CategoryFieldProps) {
+export default function CategoryField({ form, language, name }: Props) {
   const popularCategories = [
     {
       value: language === "ps" ? "فقه" : "Fiqh",
