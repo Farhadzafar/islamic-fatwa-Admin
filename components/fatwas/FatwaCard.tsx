@@ -10,6 +10,7 @@ import {
   Eye,
   ThumbsUp,
 } from "lucide-react";
+import ActionMenu from "../share/ActionMenu";
 
 type Fatwas = {
   id: number;
@@ -52,15 +53,7 @@ export default function FatwaCard({ fatwas }: { fatwas: Fatwas[] }) {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon">
-                <Edit2 className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-red-500">
-                <Trash2 className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <ExternalLink className="w-4 h-4" />
-              </Button>
+              <ActionMenu id={fatwa.id} type="fatwa" />
             </div>
           </div>
           <div className="flex flex-wrap gap-2">

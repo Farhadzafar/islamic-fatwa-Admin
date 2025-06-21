@@ -4,24 +4,16 @@ import { fatwaSchema } from "./fatwaSchama";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { Form } from "@/components/ui/form";
 import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MadhabField from "@/components/form/MadhabField";
 import TitleField from "@/components/form/TitleField";
-import ImageFileField from "@/components/form/ImageFileField";
 import CategoryField from "@/components/form/CategoryField";
 import RichTextEditorField from "../form/TextEditorField";
 import { useSearchParams } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { submitFatwa } from "@/lib/data/fatwa";
 import { z } from "zod";
 
 export default function ArticleForm() {
@@ -29,19 +21,24 @@ export default function ArticleForm() {
   const [language, setLanguage] = useState("");
   const searchParams = useSearchParams();
   const lang = searchParams.get("lang") || "en";
-  console.log("language is ===", lang);
   useEffect(() => {
     setLanguage(lang || "en");
   }, [lang]);
 
+  const userString = localStorage.getItem("user");
+  if (!userString) throw new Error("User not found in localStorage");
+  const userObject = JSON.parse(userString);
+
+  const userId = userObject?.user?._id;
+  if (!userId) throw new Error("User ID not found in localStorage");
+
   const defaultValues = {
     title: "",
-    author: "khan",
-    content: "",
+    scholar: `${userId}`,
+    description: "",
     category: "",
     madhab: "",
     language: `${lang}`,
-    readTime: "",
   };
   const form = useForm<z.infer<typeof fatwaSchema>>({
     resolver: zodResolver(fatwaSchema),
@@ -50,14 +47,11 @@ export default function ArticleForm() {
 
   const onSubmit = async (values: z.infer<typeof fatwaSchema>) => {
     setIsSubmitting(true);
-    console.log("Form submitted with values:", values);
-
-    // Simulate upload
-    await new Promise((res) => setTimeout(res, 1000));
-
+    const success = await submitFatwa(values);
+    if (success) {
+      form.reset();
+    }
     setIsSubmitting(false);
-    // Reset form after submission
-    form.reset(defaultValues);
   };
 
   return (
@@ -80,33 +74,7 @@ export default function ArticleForm() {
             <RichTextEditorField
               form={form}
               language={language}
-              name="content"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
-            <FormField
-              control={form.control}
-              name="readTime"
-              render={({ field }) => (
-                <FormItem
-                  className="w-full"
-                  dir={language === "en" ? "ltr" : "rtl"}
-                >
-                  <FormLabel>
-                    {language === "en" ? "Read time" : "د ویل وخت"}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      dir={language === "en" ? "ltr" : "rtl"}
-                      autoComplete="off"
-                      className={cn("w-full")}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              name="description"
             />
           </div>
 

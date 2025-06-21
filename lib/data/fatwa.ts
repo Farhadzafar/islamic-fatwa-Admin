@@ -1,9 +1,12 @@
+import { toast } from "@/hooks/use-toast";
 import { CheckCircle, Clock, Flag, MessageCircle } from "lucide-react";
+
+const apiUrl = "https://final-year-backend-project.onrender.com/api/fatwas";
 
 export async function getFatwas() {
   return [
     {
-      id: 1,
+      id: "salkdjf lskdjfl",
       len: "en",
       title: "What is the ruling on combining prayers while traveling?",
       description:
@@ -24,7 +27,7 @@ export async function getFatwas() {
       data: "2024-12-31",
     },
     {
-      id: 2,
+      id: "slkadjf",
       len: "en",
       title: "Is it permissible to pray in a non-Muslim place of worship?",
       description:
@@ -45,7 +48,7 @@ export async function getFatwas() {
       data: "2024-12-31",
     },
     {
-      id: 3,
+      id: "sj dlkfjsdlksjfoiwejf",
       len: "en",
       title: "Can I fast on Fridays alone?",
       description:
@@ -66,7 +69,7 @@ export async function getFatwas() {
       data: "2024-12-31",
     },
     {
-      id: 4,
+      id: "slkdfj lkwejfoi",
       len: "en",
       title: "What is the ruling on using a miswak?",
       description:
@@ -87,7 +90,7 @@ export async function getFatwas() {
       data: "2024-12-31",
     },
     {
-      id: 5,
+      id: "lsdakf jowiejflk sdajf",
       len: "en",
       title: "Is it permissible to eat food from a non-Muslim?",
       description:
@@ -108,7 +111,7 @@ export async function getFatwas() {
       data: "2024-12-31",
     },
     {
-      id: 6,
+      id: "ls adjflkse",
       len: "en",
       title: "Can I pray without a prayer mat?",
       description:
@@ -129,7 +132,7 @@ export async function getFatwas() {
       data: "2024-12-31",
     },
     {
-      id: 7,
+      id: "lskjdfowiejfl",
       len: "en",
       title: "What is the ruling on using a toothbrush while fasting?",
       description:
@@ -150,7 +153,7 @@ export async function getFatwas() {
       data: "2024-12-31",
     },
     {
-      id: 8,
+      id: "lskjdflkwej",
       len: "en",
       title: "Is it allowed to pray in a non-Muslim cemetery?",
       description:
@@ -171,7 +174,7 @@ export async function getFatwas() {
       data: "2024-12-31",
     },
     {
-      id: 9,
+      id: "9",
       len: "en",
       title: "Can I use a phone during prayer?",
       description:
@@ -193,6 +196,56 @@ export async function getFatwas() {
     },
   ];
 }
+
+interface Fatwa {
+  title: string;
+  scholar: string;
+  description: string;
+  category: string;
+  madhab: string;
+  language: string;
+}
+
+export const submitFatwa = async (values: Fatwa): Promise<boolean> => {
+  try {
+    const userString = localStorage.getItem("user");
+    if (!userString) throw new Error("User not found in localStorage");
+
+    const userObject = JSON.parse(userString);
+    const token = userObject?.user?.token;
+    if (!token) throw new Error("Authentication token not found");
+    const endpoint = `${apiUrl}/add`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(values),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to submit fatwa");
+    }
+
+    toast({
+      title: "Fatwa submitted successfully",
+      description: "Your fatwa has been submitted for review.",
+      variant: "default",
+    });
+
+    return true;
+  } catch (error: any) {
+    console.error("Submit error:", error);
+    toast({
+      title: "د ثبتولو تېروتنه",
+      description: error.message || "فتوی ونه سپارل شوه، بیا هڅه وکړئ.",
+      variant: "destructive",
+    });
+    return false;
+  }
+};
 
 export async function getStats() {
   return [

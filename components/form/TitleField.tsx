@@ -7,15 +7,17 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Control, FieldValues } from "react-hook-form";
+import { Control, FieldValues, UseFormReturn } from "react-hook-form";
+import { z } from "zod";
+import { fatwaSchema } from "../fatwas/fatwaSchama";
 
-interface TitleFieldProps {
-  form: { control: Control<FieldValues> };
+interface Props {
+  form: UseFormReturn<z.infer<typeof fatwaSchema>>;
+  name: keyof z.infer<typeof fatwaSchema>;
   language: string;
-  name: string;
 }
 
-export default function TitleField({ form, language, name }: TitleFieldProps) {
+export default function TitleField({ form, language, name }: Props) {
   const isPashto = language === "ps";
 
   return (
