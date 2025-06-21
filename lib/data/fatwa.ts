@@ -3,200 +3,6 @@ import { CheckCircle, Clock, Flag, MessageCircle } from "lucide-react";
 
 const apiUrl = "https://final-year-backend-project.onrender.com/api/fatwas";
 
-export async function getFatwas() {
-  return [
-    {
-      id: "salkdjf lskdjfl",
-      len: "en",
-      title: "What is the ruling on combining prayers while traveling?",
-      description:
-        "I will be traveling next week and I'm wondering about the conditions for combining prayers during travel... week and I'm wondering about the conditions for combining prayers during travel... week and I'm wondering about the conditions for combining prayers during travel... week and I'm wondering about the conditions for combining prayers during travel... week and I'm wondering about the conditions for combining prayers during travel... week and I'm wondering about the conditions for combining prayers during travel... week and I'm wondering about the conditions for combining prayers during travel... week and I'm wondering about the conditions for combining prayers during travel... week and I'm wondering about the conditions for combining prayers during travel... week and I'm wondering about the conditions for combining prayers during travel...",
-      category: "Fiqh",
-      tags: ["Prayer", "Travel", "Fiqh"],
-      status: "publish",
-      mezhab: "Hanafi",
-      fatwaBy: "Ahmad",
-      views: 1256,
-      likes: 89,
-      verified: true,
-      reference: [
-        "https://example.com/reference1",
-        "https://example.com/reference2",
-        "https://example.com/reference3",
-      ],
-      data: "2024-12-31",
-    },
-    {
-      id: "slkadjf",
-      len: "en",
-      title: "Is it permissible to pray in a non-Muslim place of worship?",
-      description:
-        "I have been invited to a wedding in a church. Is it permissible for me to pray there? I have been invited to a wedding in a church. Is it permissible for me to pray there? I have been invited to a wedding in a church. Is it permissible for me to pray there? I have been invited to a wedding in a church. Is it permissible for me to pray there? I have been invited to a wedding in a church. Is it permissible for me to pray there? I have been invited to a wedding in a church. Is it permissible for me to pray there? I have been invited to a wedding in a church. Is it permissible for me to pray there? I have been invited to a wedding in a church. Is it permissible for me to pray there? I have been invited to a wedding in a church. Is it permissible for me to pray there?",
-      category: "Fiqh",
-      tags: ["Prayer", "Church", "Fiqh"],
-      status: "pending",
-      mezhab: "Shafi'i",
-      fatwaBy: "Fatima",
-      views: 789,
-      likes: 45,
-      verified: false,
-      reference: [
-        "https://example.com/reference4",
-        "https://example.com/reference5",
-        "https://example.com/reference6",
-      ],
-      data: "2024-12-31",
-    },
-    {
-      id: "sj dlkfjsdlksjfoiwejf",
-      len: "en",
-      title: "Can I fast on Fridays alone?",
-      description:
-        "I heard that fasting on Fridays alone is not allowed. Is this true?",
-      category: "Fiqh",
-      tags: ["Fasting", "Friday", "Fiqh"],
-      status: "draft",
-      mezhab: "Maliki",
-      fatwaBy: "Ali",
-      views: 456,
-      likes: 23,
-      verified: true,
-      reference: [
-        "https://example.com/reference7",
-        "https://example.com/reference8",
-        "https://example.com/reference9",
-      ],
-      data: "2024-12-31",
-    },
-    {
-      id: "slkdfj lkwejfoi",
-      len: "en",
-      title: "What is the ruling on using a miswak?",
-      description:
-        "I want to know if using a miswak is obligatory or recommended.",
-      category: "Fiqh",
-      tags: ["Oral Hygiene", "Miswak", "Fiqh"],
-      status: "publish",
-      mezhab: "Hanbali",
-      fatwaBy: "Zainab",
-      views: 1023,
-      likes: 67,
-      verified: false,
-      reference: [
-        "https://example.com/reference10",
-        "https://example.com/reference11",
-        "https://example.com/reference12",
-      ],
-      data: "2024-12-31",
-    },
-    {
-      id: "lsdakf jowiejflk sdajf",
-      len: "en",
-      title: "Is it permissible to eat food from a non-Muslim?",
-      description:
-        "I have a friend who is not Muslim. Can I eat food that he prepares?",
-      category: "Fiqh",
-      tags: ["Food", "Non-Muslim", "Fiqh"],
-      status: "publish",
-      mezhab: "Hanafi",
-      fatwaBy: "Omar",
-      views: 654,
-      likes: 34,
-      verified: true,
-      reference: [
-        "https://example.com/reference13",
-        "https://example.com/reference14",
-        "https://example.com/reference15",
-      ],
-      data: "2024-12-31",
-    },
-    {
-      id: "ls adjflkse",
-      len: "en",
-      title: "Can I pray without a prayer mat?",
-      description:
-        "I forgot my prayer mat at home. Is it acceptable to pray on the floor?",
-      category: "Fiqh",
-      tags: ["Prayer", "Prayer Mat", "Fiqh"],
-      status: "publish",
-      mezhab: "Shafi'i",
-      fatwaBy: "Aisha",
-      views: 890,
-      likes: 56,
-      verified: false,
-      reference: [
-        "https://example.com/reference16",
-        "https://example.com/reference17",
-        "https://example.com/reference18",
-      ],
-      data: "2024-12-31",
-    },
-    {
-      id: "lskjdfowiejfl",
-      len: "en",
-      title: "What is the ruling on using a toothbrush while fasting?",
-      description:
-        "I want to know if using a toothbrush while fasting breaks the fast.",
-      category: "Fiqh",
-      tags: ["Fasting", "Toothbrush", "Fiqh"],
-      status: "publish",
-      mezhab: "Maliki",
-      fatwaBy: "Fatima",
-      views: 345,
-      likes: 12,
-      verified: true,
-      reference: [
-        "https://example.com/reference19",
-        "https://example.com/reference20",
-        "https://example.com/reference21",
-      ],
-      data: "2024-12-31",
-    },
-    {
-      id: "lskjdflkwej",
-      len: "en",
-      title: "Is it allowed to pray in a non-Muslim cemetery?",
-      description:
-        "I have a family member buried in a non-Muslim cemetery. Can I pray there?",
-      category: "Fiqh",
-      tags: ["Prayer", "Cemetery", "Fiqh"],
-      status: "publish",
-      mezhab: "Hanbali",
-      fatwaBy: "Ali",
-      views: 789,
-      likes: 45,
-      verified: false,
-      reference: [
-        "https://example.com/reference22",
-        "https://example.com/reference23",
-        "https://example.com/reference24",
-      ],
-      data: "2024-12-31",
-    },
-    {
-      id: "9",
-      len: "en",
-      title: "Can I use a phone during prayer?",
-      description:
-        "I have an important call. Is it permissible to answer it during prayer?",
-      category: "Fiqh",
-      tags: ["Prayer", "Phone", "Fiqh"],
-      status: "publish",
-      mezhab: "Hanafi",
-      fatwaBy: "Zainab",
-      views: 456,
-      likes: 23,
-      verified: true,
-      reference: [
-        "https://example.com/reference25",
-        "https://example.com/reference26",
-        "https://example.com/reference27",
-      ],
-      data: "2024-12-31",
-    },
-  ];
-}
-
 interface Fatwa {
   title: string;
   scholar: string;
@@ -204,6 +10,31 @@ interface Fatwa {
   category: string;
   madhab: string;
   language: string;
+}
+export async function getFatwas(page = 1, limit = 5) {
+  try {
+    const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
+      headers: {
+        "Content-Type": "application/json",
+        // "Accept-Language": "ps",
+      },
+      cache: "no-store",
+    });
+
+    const json = await response.json();
+
+    if (!json.success || !Array.isArray(json.data)) {
+      throw new Error("Invalid response");
+    }
+
+    return {
+      fatwas: json.data,
+      hasMore: json.hasMore, // ← مهمه ده
+    };
+  } catch (error) {
+    console.error("❌ getFatwas error:", error);
+    return { fatwas: [], hasMore: false };
+  }
 }
 
 export const submitFatwa = async (values: Fatwa): Promise<boolean> => {

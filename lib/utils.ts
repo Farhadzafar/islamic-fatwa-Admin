@@ -17,7 +17,11 @@ export function cn(...inputs: ClassValue[]) {
 // This function takes a Date object and returns a string in the format YYYY-MM-DD
 // It uses the toISOString method to convert the date to a string and then splits it at the 'T' character to get the date part. The split method is used to separate the date and time components of the ISO string, and we only take the first part (the date) for our output. This ensures that the output is always in the YYYY-MM-DD format, regardless of the input date.
 
-export function formatDate(date: Date): string {
+export function formatDate(date: string | Date): string {
+  if (!date) return "";
+  if (typeof date === "string") {
+    date = new Date(date);
+  }
   return date.toISOString().split("T")[0];
 }
 
@@ -28,10 +32,11 @@ export function formatDate(date: Date): string {
 // console.log(truncatedString); // Output: "This is a very long..."
 // This function takes a string and a maximum length as input. If the string is longer than the specified length, it truncates the string and adds an ellipsis ("...") at the end. If the string is shorter than or equal to the specified length, it returns the original string.
 export function truncateString(str: string, maxLength: number): string {
-  if (str.length > maxLength) {
-    return str.slice(0, maxLength) + "...";
-  }
-  return str;
+  if (!str) return "";
+  const plainText = str.replace(/<[^>]+>/g, ""); // remove HTML tags
+  return plainText.length > maxLength
+    ? plainText.slice(0, maxLength) + "..."
+    : plainText;
 }
 
 // Number Formatter
