@@ -1,19 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { truncateString } from "@/lib/utils";
-import {
-  Edit2,
-  Trash2,
-  ExternalLink,
-  User,
-  Clock,
-  Eye,
-  ThumbsUp,
-} from "lucide-react";
+import { User, Clock, Eye, ThumbsUp } from "lucide-react";
 import ActionMenu from "../share/ActionMenu";
 
 type Fatwas = {
-  id: number;
+  id: string;
   len: string;
   title: string;
   description: string;
