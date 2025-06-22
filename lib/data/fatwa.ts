@@ -16,7 +16,7 @@ export async function getFatwas(page = 1, limit = 5) {
     const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
       headers: {
         "Content-Type": "application/json",
-        // "Accept-Language": "ps",
+        "Accept-Language": "ps",
       },
       cache: "no-store",
     });
@@ -26,6 +26,7 @@ export async function getFatwas(page = 1, limit = 5) {
     if (!json.success || !Array.isArray(json.data)) {
       throw new Error("Invalid response");
     }
+    console.log("Fatwas fetched:", json.data.length, "Page:", page);
 
     return {
       fatwas: json.data,
@@ -34,6 +35,102 @@ export async function getFatwas(page = 1, limit = 5) {
   } catch (error) {
     console.error("❌ getFatwas error:", error);
     return { fatwas: [], hasMore: false };
+  }
+}
+
+export async function getFatwaById(id: string): Promise<Fatwa | null> {
+  try {
+    const response = await fetch(`${apiUrl}/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Accept-Language": "ps",
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch fatwa");
+    }
+
+    const data = await response.json();
+    return data.data || null;
+  } catch (error) {
+    console.error("Error fetching fatwa by ID:", error);
+    return null;
+  }
+}
+
+export async function deleteFatwa(id: string): Promise<boolean> {
+  try {
+    const userString = localStorage.getItem("user");
+    if (!userString) throw new Error("User not found in localStorage");
+
+    const userObject = JSON.parse(userString);
+    const token = userObject?.user?.token;
+    if (!token) throw new Error("Authentication token not found");
+
+    const endpoint = `${apiUrl}/${id}`;
+    const response = await fetch(endpoint, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to delete fatwa");
+    }
+
+    toast({
+      title: "Fatwa deleted successfully",
+      description: "The fatwa has been removed.",
+      variant: "default",
+    });
+
+    return true;
+  } catch (error: any) {
+    console.error("Delete error:", error);
+    toast({
+      title: " delete error",
+      description: error.message || "Failed to delete fatwa, please try again.",
+      variant: "destructive",
+    });
+    return false;
+  }
+}
+
+export async function editFatwa(
+  id: string,
+  data: Record<string, any>
+): Promise<boolean> {
+  try {
+    const userString = localStorage.getItem("user");
+    if (!userString) throw new Error("User not found");
+
+    const userObject = JSON.parse(userString);
+    const token = userObject?.user?.token;
+
+    const endpoint = `${apiUrl}/update/:${id}`;
+    const res = await fetch(endpoint, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Failed to edit fatwa");
+    }
+
+    return true;
+  } catch (err: any) {
+    console.error("Edit error:", err.message);
+    return false;
   }
 }
 

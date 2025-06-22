@@ -21,8 +21,13 @@ type Fatwas = {
   };
 };
 
-export default function FatwaCard({ fatwas }: { fatwas: Fatwas[] }) {
-  console.log("FatwaCard rendered with fatwas:", fatwas);
+export default function FatwaCard({
+  fatwas,
+  onDelete,
+}: {
+  fatwas: Fatwas[];
+  onDelete: (id: string) => void;
+}) {
   return (
     <div className="space-y-4">
       {fatwas.map((fatwa, i) => {
@@ -49,7 +54,7 @@ export default function FatwaCard({ fatwas }: { fatwas: Fatwas[] }) {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <ActionMenu id={fatwa._id} type="fatwa" />
+                <ActionMenu id={fatwa._id} onDelete={onDelete} />
               </div>
             </div>
 

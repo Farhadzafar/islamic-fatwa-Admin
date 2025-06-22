@@ -5,13 +5,15 @@ import { useState, useRef, useEffect } from "react";
 import { MoreVertical, Pencil, Trash, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "../ui/button";
+import { any } from "zod";
 
-interface ActionMenuProps {
+type ActionMenuProps = {
   id: string;
-  type: "book" | "article" | "research" | "fatwa";
-}
+  // onEdit: (id: string) => void;
+  onDelete: (id: string) => void | Promise<boolean>;
+};
 
-export default function ActionMenu({ id, type }: ActionMenuProps) {
+export default function ActionMenu({ id, onDelete }: ActionMenuProps) {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -21,35 +23,16 @@ export default function ActionMenu({ id, type }: ActionMenuProps) {
 
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const editPath = `/${type}s/edit/${id}`;
-  const apiPath = `/api/${type}s/${id}`;
-
   const capitalize = (w: string) => w.charAt(0).toUpperCase() + w.slice(1);
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    try {
-      const res = await fetch(apiPath, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error();
-
-      toast({
-        title: "Deleted",
-        description: `${capitalize(type)} deleted successfully.`,
-      });
-
-      setShowConfirm(false);
+    const success = await onDelete(id);
+    if (success) {
       router.refresh();
-    } catch {
-      toast({
-        title: "Error",
-        description: `Failed to delete the ${type}.`,
-        variant: "destructive",
-      });
-    } finally {
-      setIsDeleting(false);
     }
+    setIsDeleting(false);
+    setShowConfirm(false);
   };
 
   // Close dropdown menu if clicking outside
@@ -79,7 +62,7 @@ export default function ActionMenu({ id, type }: ActionMenuProps) {
       {/* Dropdown menu */}
       {openMenu && (
         <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow z-50">
-          <button
+          {/* <button
             onClick={() => {
               setOpenMenu(false);
               router.push(editPath);
@@ -88,7 +71,7 @@ export default function ActionMenu({ id, type }: ActionMenuProps) {
           >
             <Pencil className="w-4 h-4 mr-2" />
             Edit
-          </button>
+          </button> */}
           <button
             onClick={() => {
               setShowConfirm(true);
@@ -113,7 +96,7 @@ export default function ActionMenu({ id, type }: ActionMenuProps) {
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-lg font-semibold mb-4">
-              Are you sure you want to delete this {type}?
+              Are you sure you want to delete this ?
             </h2>
             <div className="flex justify-end gap-2">
               <button

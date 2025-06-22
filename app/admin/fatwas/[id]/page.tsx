@@ -1,7 +1,6 @@
-// app/fatwa/new/page.tsx (Server Component)
+import React from "react";
 import FatwaForm from "@/components/fatwas/FatwaForm";
-
-export default function NewFatwaAdd() {
+export default function page() {
   return (
     <main className="p-8">
       <FatwaForm />
