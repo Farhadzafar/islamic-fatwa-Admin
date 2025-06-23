@@ -9,11 +9,11 @@ import { any } from "zod";
 
 type ActionMenuProps = {
   id: string;
-  // onEdit: (id: string) => void;
+  onEdit: (id: string) => void | Promise<void>;
   onDelete: (id: string) => void | Promise<boolean>;
 };
 
-export default function ActionMenu({ id, onDelete }: ActionMenuProps) {
+export default function ActionMenu({ id, onDelete, onEdit }: ActionMenuProps) {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -33,6 +33,11 @@ export default function ActionMenu({ id, onDelete }: ActionMenuProps) {
     }
     setIsDeleting(false);
     setShowConfirm(false);
+  };
+
+  const hendleEdit = () => {
+    setOpenMenu(false);
+    onEdit(id);
   };
 
   // Close dropdown menu if clicking outside
@@ -62,16 +67,16 @@ export default function ActionMenu({ id, onDelete }: ActionMenuProps) {
       {/* Dropdown menu */}
       {openMenu && (
         <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow z-50">
-          {/* <button
+          <button
             onClick={() => {
               setOpenMenu(false);
-              router.push(editPath);
+              hendleEdit();
             }}
             className="flex items-center w-full px-4 py-2 hover:bg-gray-100 text-sm"
           >
             <Pencil className="w-4 h-4 mr-2" />
             Edit
-          </button> */}
+          </button>
           <button
             onClick={() => {
               setShowConfirm(true);

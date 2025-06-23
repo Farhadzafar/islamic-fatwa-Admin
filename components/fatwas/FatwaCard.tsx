@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { truncateString, formatDate } from "@/lib/utils";
 import { User, Clock, Eye, ThumbsUp } from "lucide-react";
 import ActionMenu from "../share/ActionMenu";
+import Link from "next/link";
 
 type Fatwas = {
   _id: string;
@@ -24,10 +25,15 @@ type Fatwas = {
 export default function FatwaCard({
   fatwas,
   onDelete,
+  onEdit,
 }: {
   fatwas: Fatwas[];
   onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
 }) {
+  if (!fatwas || fatwas.length === 0) {
+    return <div className="text-center text-gray-500">No fatwas found.</div>;
+  }
   return (
     <div className="space-y-4">
       {fatwas.map((fatwa, i) => {
@@ -48,13 +54,21 @@ export default function FatwaCard({
                     Mezhab: {fatwa.madhab || "Unknown"}
                   </span>
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{fatwa.title}</h3>
+                <Link href={`/admin/fatwas/${fatwa._id}`}>
+                  <h3 className="text-lg font-semibold mb-2 hover:text-primary">
+                    {fatwa.title}
+                  </h3>
+                </Link>
                 <p className="text-gray-600 text-sm">
                   {truncateString(fatwa.description, 150)}
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <ActionMenu id={fatwa._id} onDelete={onDelete} />
+                <ActionMenu
+                  id={fatwa._id}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                />
               </div>
             </div>
 

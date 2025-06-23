@@ -4,19 +4,29 @@ import { CheckCircle, Clock, Flag, MessageCircle } from "lucide-react";
 const apiUrl = "https://final-year-backend-project.onrender.com/api/fatwas";
 
 interface Fatwa {
+  _id: string;
   title: string;
   scholar: string;
   description: string;
   category: string;
   madhab: string;
   language: string;
+  status: string;
+  createdAt: string;
+  views: number;
+  likes?: string[];
+  tags?: string[];
+  scholarDetails?: {
+    _id: string;
+    fullName?: string;
+  };
 }
 export async function getFatwas(page = 1, limit = 5) {
   try {
     const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
       headers: {
         "Content-Type": "application/json",
-        "Accept-Language": "ps",
+        // "Accept-Language": "ps",
       },
       cache: "no-store",
     });
@@ -102,18 +112,22 @@ export async function deleteFatwa(id: string): Promise<boolean> {
 }
 
 export async function editFatwa(
-  id: string,
-  data: Record<string, any>
+  id: string | undefined,
+  data: Fatwa & { _id?: string }
 ): Promise<boolean> {
+  if (!id) return false;
+
   try {
     const userString = localStorage.getItem("user");
     if (!userString) throw new Error("User not found");
 
     const userObject = JSON.parse(userString);
     const token = userObject?.user?.token;
+    if (!token) throw new Error("Authentication token not found");
 
-    const endpoint = `${apiUrl}/update/:${id}`;
-    const res = await fetch(endpoint, {
+    const endpoint = `https://final-year-backend-project.onrender.com/api/fatwas/update/${id}`;
+
+    const response = await fetch(endpoint, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -122,14 +136,14 @@ export async function editFatwa(
       body: JSON.stringify(data),
     });
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Failed to edit fatwa");
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to update fatwa");
     }
 
     return true;
-  } catch (err: any) {
-    console.error("Edit error:", err.message);
+  } catch (error: any) {
+    console.error("Edit error:", error.message);
     return false;
   }
 }
