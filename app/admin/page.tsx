@@ -5,7 +5,7 @@ import QuestionsAnalyticsChart from "@/components/dashboard/charts/QuestionsAnal
 import NotificationsList from "@/components/dashboard/notifications/NotificationsList";
 import CategoryPieChart from "@/components/dashboard/charts/CategoryPieChart";
 import UserActivityChart from "@/components/dashboard/charts/UserActivityChart";
-import BooksGrid from "@/components/books/BooksGrid";
+
 import ResearchPapersList from "@/components/research/ResearchPapersList";
 import {
   areaChartData,
@@ -58,8 +58,6 @@ export default function AdminDashboard() {
             </Link>
           </div>
         </div>
-        <BooksGrid books={recentBooks} />
-        <BooksGrid books={recentBooks} />
       </div>
 
       <ResearchPapersList papers={researchPapers} />

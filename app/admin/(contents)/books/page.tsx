@@ -1,5 +1,4 @@
 import BookHeader from "@/components/books/BookHeader";
-import BooksGrid from "@/components/books/BooksGrid";
 import React from "react";
 import { recentBooks } from "@/constants/data";
 import { StaticCard } from "@/components/books/StaticCard";
@@ -10,6 +9,7 @@ import {
   getStatuses,
 } from "@/lib/data/books";
 import BooksFiltersCard from "@/components/books/BooksFiltersCard";
+import BookPageClient from "@/components/books/BookPageClient";
 
 export default async function page() {
   const stats = await getStats();
@@ -26,9 +26,7 @@ export default async function page() {
         languages={languages}
         statuses={Statuses}
       />
-      <BooksGrid books={recentBooks} />
-      <BooksGrid books={recentBooks} />
-      <BooksGrid books={recentBooks} />
+      <BookPageClient />
     </div>
   );
 }

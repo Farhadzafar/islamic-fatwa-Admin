@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation"; // ✅ مهم
+
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import FatwaCard from "./FatwaCard";
 import { deleteFatwa, getFatwas } from "@/lib/data/fatwa";
 
@@ -12,18 +13,43 @@ export default function FatwasPageClient() {
   const observerRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
-  const loadMore = async () => {
-    if (!hasMore || loading) return;
+  const loadMore = useCallback(async () => {
+    if (loading || !hasMore) return;
+
     setLoading(true);
-    const { fatwas: newFatwas, hasMore: more } = await getFatwas(page);
-    setFatwas((prev) => [...prev, ...newFatwas]);
-    setPage((prev) => prev + 1);
-    setHasMore(more);
-    setLoading(false);
-  };
+    const nextPage = page + 1;
+
+    try {
+      console.log("👉 Fetching page:", nextPage);
+      const { fatwas: newFatwas, hasMore: more } = await getFatwas(nextPage);
+
+      setFatwas((prev) => [...prev, ...newFatwas]);
+      setPage(nextPage);
+      setHasMore(more);
+    } catch (error) {
+      console.error("⚠️ Failed to load fatwas:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, loading, hasMore]);
 
   useEffect(() => {
-    loadMore();
+    // Load the first page once on mount
+    const fetchFirstPage = async () => {
+      setLoading(true);
+      try {
+        const { fatwas: initialFatwas, hasMore: more } = await getFatwas(1);
+        setFatwas(initialFatwas);
+        setHasMore(more);
+        setPage(1);
+      } catch (err) {
+        console.error("❌ Error loading first page:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFirstPage();
   }, []);
 
   useEffect(() => {
@@ -33,12 +59,13 @@ export default function FatwasPageClient() {
       }
     });
 
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
+    const sentinel = observerRef.current;
+    if (sentinel) observer.observe(sentinel);
 
-    return () => observer.disconnect();
-  }, []);
+    return () => {
+      if (sentinel) observer.unobserve(sentinel);
+    };
+  }, [loadMore]);
 
   const handleDeleteFatwa = async (id: string) => {
     const success = await deleteFatwa(id);
@@ -59,11 +86,11 @@ export default function FatwasPageClient() {
         onDelete={handleDeleteFatwa}
         onEdit={handleEditFatwa}
       />
-      <div ref={observerRef} className="h-20" />
+      <div ref={observerRef} className="h-10" />
       {loading && (
         <p className="text-center text-gray-500">Loading more fatwas...</p>
       )}
-      {!hasMore && (
+      {!hasMore && !loading && (
         <p className="text-center text-gray-400">✅ No more fatwas to load.</p>
       )}
     </div>

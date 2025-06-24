@@ -3,40 +3,53 @@ import { CheckCircle, Clock, Flag, MessageCircle } from "lucide-react";
 
 const apiUrl = "https://final-year-backend-project.onrender.com/api/fatwas";
 
-interface Fatwa {
+export interface getFatwaInterface {
   _id: string;
+  title: string;
+  description: string; // HTML content as string
+  madhab: string;
+  category: {
+    _id: string;
+    name?: string;
+  };
+  scholar: {
+    _id: string;
+    fullName: string;
+    email: string;
+  };
+  status: "pending" | "published" | "rejected" | string;
+  views: number;
+  createdAt: string; // ISO date string
+  language: "ps" | "en" | "ar";
+}
+
+export interface Fatwa {
+  _id?: string;
   title: string;
   scholar: string;
   description: string;
   category: string;
   madhab: string;
   language: string;
-  status: string;
   createdAt: string;
-  views: number;
-  likes?: string[];
-  tags?: string[];
-  scholarDetails?: {
-    _id: string;
-    fullName?: string;
-  };
 }
-export async function getFatwas(page = 1, limit = 5) {
+
+export async function getFatwas(page = 1, limit = 10) {
   try {
     const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
       headers: {
         "Content-Type": "application/json",
-        // "Accept-Language": "ps",
       },
       cache: "no-store",
     });
-
     const json = await response.json();
 
     if (!json.success || !Array.isArray(json.data)) {
       throw new Error("Invalid response");
     }
-    console.log("Fatwas fetched:", json.data.length, "Page:", page);
+
+    console.log("📜 Fatwas fetched:", json.data);
+    console.log("📜 Has more:", json.hasMore);
 
     return {
       fatwas: json.data,
@@ -48,12 +61,14 @@ export async function getFatwas(page = 1, limit = 5) {
   }
 }
 
-export async function getFatwaById(id: string): Promise<Fatwa | null> {
+export async function getFatwaById(
+  id: string
+): Promise<getFatwaInterface | null> {
   try {
     const response = await fetch(`${apiUrl}/${id}`, {
       headers: {
         "Content-Type": "application/json",
-        "Accept-Language": "ps",
+        // "Accept-Language": "ps",
       },
       cache: "no-store",
     });
@@ -113,7 +128,7 @@ export async function deleteFatwa(id: string): Promise<boolean> {
 
 export async function editFatwa(
   id: string | undefined,
-  data: Fatwa & { _id?: string }
+  data: Fatwa
 ): Promise<boolean> {
   if (!id) return false;
 
@@ -156,7 +171,12 @@ export const submitFatwa = async (values: Fatwa): Promise<boolean> => {
     const userObject = JSON.parse(userString);
     const token = userObject?.user?.token;
     if (!token) throw new Error("Authentication token not found");
+
     const endpoint = `${apiUrl}/add`;
+
+    console.log("📤 Submitting fatwa to:", endpoint);
+    console.log("🧾 Payload:", values);
+
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
@@ -167,8 +187,20 @@ export const submitFatwa = async (values: Fatwa): Promise<boolean> => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to submit fatwa");
+      const rawText = await response.text();
+      let errorMessage: string;
+
+      try {
+        const errorData = JSON.parse(rawText);
+        console.error("❌ API JSON Error:", errorData);
+        errorMessage = errorData?.message || "Unknown API error";
+      } catch {
+        console.error("❌ API Text Error:", rawText);
+        errorMessage =
+          rawText || `Request failed with status ${response.status}`;
+      }
+
+      throw new Error(errorMessage);
     }
 
     toast({
@@ -179,10 +211,10 @@ export const submitFatwa = async (values: Fatwa): Promise<boolean> => {
 
     return true;
   } catch (error: any) {
-    console.error("Submit error:", error);
+    console.error("🔥 Submit exception:", error);
     toast({
-      title: "د ثبتولو تېروتنه",
-      description: error.message || "فتوی ونه سپارل شوه، بیا هڅه وکړئ.",
+      title: "Error submitting fatwa",
+      description: error.message || "Something went wrong during submission.",
       variant: "destructive",
     });
     return false;

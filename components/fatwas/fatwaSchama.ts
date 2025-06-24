@@ -1,13 +1,17 @@
 import { z } from "zod";
 
 export const fatwaSchema = z.object({
-  _id: z.string().optional(),
-  title: z.string().min(1, "fatwa title is required"),
-  scholar: z.string().min(1, "Author is required"),
-  description: z.string().min(50, " content should be 50 > is required"),
-  category: z.string().min(1, "Category is required"),
+  // _id: z.string().optional(),
+  title: z.string().min(1, "Fatwa title is required"),
+  description: z
+    .string()
+    .min(50, "Description should be at least 50 characters"),
+
   madhab: z.string().min(1, "Madhab is required"),
-  language: z.string().min(1, "Language is required"),
+  language: z.string().min(1, "Language must be one of: ps, en, ar"),
+  category: z.string().min(1, "Category is required"),
+  scholar: z.string().min(1, "Scholar is required"),
+  createdAt: z.string().optional(),
 });
 
 export type articleSchemaType = z.infer<typeof fatwaSchema>;

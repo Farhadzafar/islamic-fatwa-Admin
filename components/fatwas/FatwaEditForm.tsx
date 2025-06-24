@@ -17,7 +17,9 @@ import { useState } from "react";
 type FatwaFormValues = z.infer<typeof fatwaSchema>;
 
 interface FatwaEditFormProps {
-  fatwa?: FatwaFormValues & { _id: string };
+  fatwa?: FatwaFormValues & {
+    _id: string;
+  };
 }
 
 export default function FatwaEditForm({ fatwa }: FatwaEditFormProps) {
@@ -34,13 +36,13 @@ export default function FatwaEditForm({ fatwa }: FatwaEditFormProps) {
       category: fatwa?.category || "",
       madhab: fatwa?.madhab || "",
       language: fatwa?.language || "en",
+      createdAt: fatwa?.createdAt || new Date().toISOString(),
     },
   });
 
   const handleSubmit = async (values: FatwaFormValues) => {
     setIsSubmitting(true);
-    console.log("🙌🙌🙌🙌Fatwa update result:");
-    setIsSubmitting(false);
+
     if (!fatwa?._id) {
       toast({
         title: "Error",
@@ -51,30 +53,38 @@ export default function FatwaEditForm({ fatwa }: FatwaEditFormProps) {
       return;
     }
 
-    const result = await editFatwa(fatwa._id, {
-      _id: fatwa._id,
-      title: values.title,
-      scholar: values.scholar,
-      description: values.description,
-      category: values.category,
-      madhab: values.madhab,
-      language: values.language,
-      status: (fatwa as any).status ?? "draft",
-      createdAt: (fatwa as any).createdAt ?? new Date().toISOString(),
-      views: (fatwa as any).views ?? 0,
-    });
-
-    if (result) {
-      toast({
-        title: "Updated",
-        description: "Fatwa updated successfully.",
+    try {
+      const result = await editFatwa(fatwa._id, {
+        _id: fatwa._id,
+        title: values.title,
+        scholar: values.scholar,
+        description: values.description,
+        category: values.category,
+        madhab: values.madhab,
+        language: values.language,
+        createdAt: fatwa.createdAt ?? new Date().toISOString(),
       });
-    } else {
+
+      if (result) {
+        toast({
+          title: "Updated",
+          description: "Fatwa updated successfully.",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to update fatwa.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update fatwa.",
+        description: "An error occurred while updating.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

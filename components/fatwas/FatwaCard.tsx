@@ -4,6 +4,8 @@ import { User, Clock, Eye, ThumbsUp } from "lucide-react";
 import ActionMenu from "../share/ActionMenu";
 import Link from "next/link";
 
+import { getFatwaInterface } from "@/lib/data/fatwa";
+
 type Fatwas = {
   _id: string;
   title: string;
@@ -27,7 +29,7 @@ export default function FatwaCard({
   onDelete,
   onEdit,
 }: {
-  fatwas: Fatwas[];
+  fatwas: getFatwaInterface[];
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
 }) {
@@ -40,12 +42,12 @@ export default function FatwaCard({
         const isRtl = fatwa.language === "ps" || fatwa.language === "ar";
 
         return (
-          <Card key={i} className="p-6 space-y-4" dir={isRtl ? "rtl" : "ltr"}>
+          <Card key={fatwa._id} className="p-6 space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-3 mb-2">
                   <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-600">
-                    {fatwa.category}
+                    {fatwa.category?.name || "No category"}
                   </span>
                   <span className="px-3 py-1 rounded-full text-sm bg-green-50 text-green-600">
                     {fatwa.status}
@@ -54,15 +56,24 @@ export default function FatwaCard({
                     Mezhab: {fatwa.madhab || "Unknown"}
                   </span>
                 </div>
-                <Link href={`/admin/fatwas/${fatwa._id}`}>
+
+                <Link
+                  href={`/admin/fatwas/${fatwa._id}`}
+                  dir={isRtl ? "rtl" : "ltr"}
+                >
                   <h3 className="text-lg font-semibold mb-2 hover:text-primary">
                     {fatwa.title}
                   </h3>
                 </Link>
-                <p className="text-gray-600 text-sm">
+
+                <p
+                  className="text-gray-600 text-sm"
+                  dir={isRtl ? "rtl" : "ltr"}
+                >
                   {truncateString(fatwa.description, 150)}
                 </p>
               </div>
+
               <div className="flex items-center gap-2">
                 <ActionMenu
                   id={fatwa._id}
@@ -72,11 +83,11 @@ export default function FatwaCard({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-              <div className="flex items-center gap-8">
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t w-full">
+              <div className=" flex items-center justify-start gap-8 ">
                 <div className="flex items-center gap-2 text-sm">
                   <User className="w-4 h-4 text-gray-400" />
-                  Fatwa by:
+
                   <span className="font-medium">
                     {fatwa.scholar?.fullName || "Unknown"}
                   </span>
@@ -90,12 +101,11 @@ export default function FatwaCard({
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-4 text-sm">
+              <div className="flex items-center justify-end gap-4 text-sm w">
                 <Eye className="w-4 h-4 text-gray-400" />
-                {fatwa.views || 0}
-
+                {fatwa.views ?? 0}
                 <ThumbsUp className="w-4 h-4 text-gray-400" />
-                {fatwa.likes?.length || 0}
+                {fatwa.likes?.length ?? 0}
               </div>
             </div>
           </Card>

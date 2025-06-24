@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+
+import React, { useState } from "react";
 import { BookSchema } from "./BookSchama";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,73 +14,87 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import MadhabField from "@/components/form/MadhabField";
 import TitleField from "@/components/form/TitleField";
-import { Description } from "@radix-ui/react-toast";
 import DescriptionField from "@/components/form/DescriptionField";
 import PdfFileField from "@/components/form/PdfFileField";
 import PublishDateField from "@/components/form/publishDateField";
 import ImageFileField from "@/components/form/ImageFileField";
 import CategoryField from "@/components/form/CategoryField";
-import RichTextEditorField from "../form/TextEditorField";
 import { useSearchParams } from "next/navigation";
-
-// const selectStyle = cn(
-//   "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-//   "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-//   "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-// );
+import { getUserId } from "@/hooks/userId";
 
 export default function BookForm() {
-  const [preview, setPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const searchParams = useSearchParams();
-  const lang = searchParams.get("lang") || "en"; // default to English if not set
+  const lang = searchParams.get("lang") || "en";
+  const language = lang;
 
-  const [language, setLanguage] = useState("");
-
-  useEffect(() => {
-    const languageMap: Record<string, string> = {
-      ps: "ps",
-      en: "en",
-      ar: "ps",
-    };
-
-    setLanguage(languageMap[lang] || "English");
-  }, [lang]);
+  const userId = getUserId();
 
   const defaultValues = {
     title: "",
-    author: "jlsdfj",
+    author: "",
     summary: "",
     publishDate: "",
     coverImage: undefined as File | undefined,
     file: undefined as File | undefined,
     category: "",
     madhab: "",
-    language: `${language}`,
+    language: language,
   };
+
   const form = useForm<z.infer<typeof BookSchema>>({
     resolver: zodResolver(BookSchema),
-    defaultValues: defaultValues,
+    defaultValues,
   });
 
   const onSubmit = async (values: z.infer<typeof BookSchema>) => {
     setIsSubmitting(true);
-    console.log("Form submitted with values:", values);
 
-    // Simulate upload
-    await new Promise((res) => setTimeout(res, 1000));
+    try {
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("author", values.author);
+      formData.append("description", values.summary);
+      formData.append("publishDate", values.publishDate);
+      formData.append("category", values.category);
+      formData.append("madhab", values.madhab);
+      formData.append("language", language);
+      formData.append("uploadedBy", userId);
 
-    setIsSubmitting(false);
-    // Reset form after submission
-    form.reset(defaultValues);
-    setPreview(null);
+      if (values.coverImage) {
+        formData.append("coverImage", values.coverImage);
+      }
+      if (values.file) {
+        formData.append("file", values.file);
+      }
+
+      const res = await fetch(
+        "https://final-year-backend-project.onrender.com/api/books/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("❌ Server Error:", errorText);
+        throw new Error("Failed to upload the book.");
+      }
+
+      console.log("✅ Book submitted successfully");
+      form.reset(defaultValues);
+    } catch (err: any) {
+      console.error("🔥 Submit failed:", err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-  console.log("language is ===", language);
 
   return (
     <div>
@@ -88,22 +103,17 @@ export default function BookForm() {
         Please fill out the form below to upload a new book. All fields are
         required.
       </p>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
             <TitleField form={form} language={language} name="title" />
             <MadhabField form={form} language={language} name="madhab" />
-
             <CategoryField form={form} language={language} name="category" />
           </div>
 
           <div className="flex flex-col gap-2">
             <DescriptionField form={form} language={language} name="summary" />
-            {/* <RichTextEditorField
-              form={form}
-              language={language}
-              name="summary"
-            /> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
@@ -112,24 +122,19 @@ export default function BookForm() {
               control={form.control}
               name="author"
               render={({ field }) => (
-                <FormItem
-                  className="w-full"
-                  dir={language === "en" ? "ltr" : "rtl"}
-                >
+                <FormItem dir={language === "en" ? "ltr" : "rtl"}>
                   <FormLabel>
-                    {language === "en" ? "author" : "لیکوال"}
+                    {language === "en" ? "Author" : "لیکوال"}
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      dir={language === "en" ? "ltr" : "rtl"}
                       autoComplete="off"
                       placeholder={
                         language === "en"
-                          ? "Enter the book title..."
-                          : "سرلیک په پښتو ژبه ولیکئ..."
+                          ? "Enter author name..."
+                          : "لیکوال نوم ولیکئ..."
                       }
-                      className={cn("w-full")}
                     />
                   </FormControl>
                   <FormMessage />

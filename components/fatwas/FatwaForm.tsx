@@ -15,44 +15,50 @@ import { useSearchParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { submitFatwa } from "@/lib/data/fatwa";
 import { z } from "zod";
+import { getUserId } from "@/hooks/userId";
 
 export default function ArticleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [language, setLanguage] = useState("");
+
   const searchParams = useSearchParams();
   const lang = searchParams.get("lang") || "en";
-  useEffect(() => {
-    setLanguage(lang || "en");
-  }, [lang]);
+  // useEffect(() => {
+  //   setLanguage(lang || "en");
+  // }, [lang]);
 
-  const userString = localStorage.getItem("user");
-  if (!userString) throw new Error("User not found in localStorage");
-  const userObject = JSON.parse(userString);
-
-  const userId = userObject?.user?._id;
+  const userId = getUserId();
   if (!userId) throw new Error("User ID not found in localStorage");
 
-  const defaultValues = {
+  const defaultValues: z.infer<typeof fatwaSchema> = {
+    // _id: "",
     title: "",
-    scholar: `${userId}`,
     description: "",
+    scholar: `${userId}`,
     category: "",
     madhab: "",
     language: `${lang}`,
+    createdAt: new Date().toISOString(),
   };
+
   const form = useForm<z.infer<typeof fatwaSchema>>({
     resolver: zodResolver(fatwaSchema),
-    defaultValues: defaultValues,
+    defaultValues,
   });
-
+  const language = lang === "ar" ? "ps" : lang;
   const onSubmit = async (values: z.infer<typeof fatwaSchema>) => {
     setIsSubmitting(true);
-    const success = await submitFatwa(values);
+    console.log("Submitted values: 🥱🥱🥱🥱🥱", values);
+    const fatwaToSubmit = {
+      ...values,
+      createdAt: values.createdAt ?? new Date().toISOString(),
+    };
+    const success = await submitFatwa(fatwaToSubmit);
     if (success) {
       form.reset();
     }
     setIsSubmitting(false);
   };
+  console.log("Form Errors:", form.formState.errors);
 
   return (
     <div>

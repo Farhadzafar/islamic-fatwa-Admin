@@ -18,12 +18,34 @@ export function cn(...inputs: ClassValue[]) {
 // It uses the toISOString method to convert the date to a string and then splits it at the 'T' character to get the date part. The split method is used to separate the date and time components of the ISO string, and we only take the first part (the date) for our output. This ensures that the output is always in the YYYY-MM-DD format, regardless of the input date.
 
 export function formatDate(date: string | Date): string {
-  if (!date) return "";
-  if (typeof date === "string") {
-    date = new Date(date);
-  }
-  return date.toISOString().split("T")[0];
+  const now = new Date();
+  const inputDate = typeof date === "string" ? new Date(date) : date;
+  const diffMs = now.getTime() - inputDate.getTime();
+
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30); // Approximate
+  const years = Math.floor(days / 365);
+
+  if (seconds < 60) return `${seconds}s ago`;
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  if (weeks < 4) return `${weeks}w ago`;
+  if (months < 12) return `${months}mo ago`;
+  return `${years}y ago`;
 }
+
+// export function formatDate(date: string | Date): string {
+//   if (!date) return "";
+//   if (typeof date === "string") {
+//     date = new Date(date);
+//   }
+//   return date.toISOString().split("T")[0];
+// }
 
 // String Truncate
 // Example usage
