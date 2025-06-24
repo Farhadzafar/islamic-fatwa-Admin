@@ -96,7 +96,7 @@ export default function FatwaCard({
                   <Clock className="w-4 h-4 text-gray-400" />
                   Date:
                   <span className="font-medium">
-                    {formatDate(fatwa.createdAt)}
+                    {formatDate(fatwa.createdAt ?? "")}
                   </span>
                 </div>
               </div>

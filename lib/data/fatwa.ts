@@ -19,7 +19,7 @@ export interface getFatwaInterface {
   };
   status: "pending" | "published" | "rejected" | string;
   views: number;
-  createdAt: string; // ISO date string
+  createdAt?: string; // ISO date string
   language: "ps" | "en" | "ar";
 }
 

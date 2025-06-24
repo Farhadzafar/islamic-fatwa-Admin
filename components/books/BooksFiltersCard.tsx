@@ -22,6 +22,10 @@ export default function BooksFiltersCard({
   const [selectedLanguage, setSelectedLanguage] = useState("english");
   const [showFilters, setShowFilters] = useState(false);
 
+  // Initialize with default values
+  const defaultCategory =
+    categories.length > 0 ? categories[0].name.toLowerCase() : "all";
+
   return (
     <Card className="p-6">
       <div className="flex flex-col sm:flex-row gap-4">

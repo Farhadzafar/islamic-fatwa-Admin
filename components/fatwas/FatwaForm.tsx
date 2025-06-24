@@ -22,9 +22,6 @@ export default function ArticleForm() {
 
   const searchParams = useSearchParams();
   const lang = searchParams.get("lang") || "en";
-  // useEffect(() => {
-  //   setLanguage(lang || "en");
-  // }, [lang]);
 
   const userId = getUserId();
   if (!userId) throw new Error("User ID not found in localStorage");
