@@ -1,7 +1,4 @@
-import BookHeader from "@/components/books/BookHeader";
-import BooksGrid from "@/components/books/asd";
 import React from "react";
-import { articles, recentBooks } from "@/constants/data";
 import { StaticCard } from "@/components/books/StaticCard";
 import {
   getStats,
@@ -9,10 +6,9 @@ import {
   getLanguages,
   getStatuses,
 } from "@/lib/data/books";
-import BooksFiltersCard from "@/components/books/BooksFiltersCard";
 import ArticlesHeeder from "@/components/articles/ArticlesHeeder";
 import ArticleFiltersCard from "@/components/articles/ArticleFiltersCard";
-import { ArticleCard } from "@/components/articles/ArticleCard";
+import ArticlePageClient from "@/components/articles/ArticlesPageClient";
 
 export default async function page() {
   const stats = await getStats();
@@ -31,9 +27,7 @@ export default async function page() {
       />
       <div className="py-3">
         <h4>all articles</h4>
-        {articles.map((article) => (
-          <ArticleCard key={article.id} article={article} />
-        ))}
+        <ArticlePageClient />
       </div>
     </div>
   );
