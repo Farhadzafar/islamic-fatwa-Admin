@@ -1,7 +1,7 @@
 import { toast } from "@/hooks/use-toast";
 import { CheckCircle, Clock, Flag, MessageCircle } from "lucide-react";
 
-const apiUrl = "https://final-year-backend-project.onrender.com/api/fatwas";
+const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/fatwas`;
 
 export interface getFatwaInterface {
   _id: string;
@@ -24,7 +24,7 @@ export interface getFatwaInterface {
 }
 
 export interface Fatwa {
-  _id?: string;
+  // _id?: string;
   title: string;
   scholar: string;
   description: string;
@@ -140,7 +140,7 @@ export async function editFatwa(
     const token = userObject?.user?.token;
     if (!token) throw new Error("Authentication token not found");
 
-    const endpoint = `https://final-year-backend-project.onrender.com/api/fatwas/update/${id}`;
+    const endpoint = `${apiUrl}/update/${id}`;
 
     const response = await fetch(endpoint, {
       method: "PATCH",

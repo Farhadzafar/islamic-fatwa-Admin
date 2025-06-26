@@ -12,16 +12,19 @@ export const BookSchema = z.object({
   author: z.string().min(1, "Author is required"),
   description: z.string().min(1, "Description is required"),
   language: z.string().min(1, "Language is required"),
+
   file: z
     .any()
     .optional()
     .refine(isPDF, { message: "Only PDF files are allowed" }),
+
   coverImage: z
     .any()
     .optional()
     .refine(isImage, { message: "Only image files are allowed" }),
-  pageCount: z.string().optional(),
-  fileSizeMB: z.string().optional(),
+
+  pageCount: z.number().optional(),       // 👈 fix: should be number
+  fileSizeMB: z.number().optional(),
   category: z.string().optional(),
   uploadedBy: z.string().optional(),
 });

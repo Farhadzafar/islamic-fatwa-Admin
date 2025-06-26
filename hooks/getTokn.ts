@@ -1,4 +1,4 @@
-export function getUserToken(): string {
+export  function getUserToken(): string {
   const userString = localStorage.getItem("user");
   if (!userString) {
     throw new Error("User not found in localStorage");

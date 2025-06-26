@@ -67,8 +67,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [user, pathname, isLoading, router, toast]);
 
+  const apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
+  console.log("apiend pint is ", apiEndpoint)
+
+
+
+
   const login = async (email: string, password: string) => {
-    const url = `https://final-year-backend-project.onrender.com/api/users/login`;
+    // const url = `${apiEndpoint}/api/users/login`;
+    const url = `${apiEndpoint}/api/users/login`;
     try {
       setIsLoading(true);
       // const response = await fetch("https://dummyjson.com/auth/login", {
@@ -103,7 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Login error:", error);
       toast({
         title: "Login failed",
-        description: "An unexpected error occurred",
+        description:"An unexpected error occurred",
         variant: "destructive",
       });
       return false;

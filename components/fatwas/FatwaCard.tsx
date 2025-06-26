@@ -40,9 +40,9 @@ export default function FatwaCard({
     <div className="space-y-4">
       {fatwas.map((fatwa, i) => {
         const isRtl = fatwa.language === "ps" || fatwa.language === "ar";
-
+        
         return (
-          <Card key={fatwa._id} className="p-6 space-y-4">
+          <Card key={fatwa._id+i} className="p-6 space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-3 mb-2">

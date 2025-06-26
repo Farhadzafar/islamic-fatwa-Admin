@@ -23,7 +23,7 @@ export default function FatwasPageClient() {
       console.log("👉 Fetching page:", nextPage);
       const { fatwas: newFatwas, hasMore: more } = await getFatwas(nextPage);
 
-      setFatwas((prev) => [...prev, ...newFatwas]);
+      setFatwas((prev) => [...newFatwas, ...prev]);
       setPage(nextPage);
       setHasMore(more);
     } catch (error) {

@@ -1,10 +1,14 @@
 import { BookOpen, Clock, Download } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-const apiUrl = "https://final-year-backend-project.onrender.com/api/books";
+
+
+const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/books`
+const apiGetAllBooks = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/books/admin-books`;
 
 export default async function getAllBooks(page = 1, limit = 12) {
   try {
-    const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
+    console.log("📚 Fetching books from API:", apiGetAllBooks);
+    const response = await fetch(`${apiGetAllBooks}?page=${page}&limit=${limit}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -30,15 +34,23 @@ export default async function getAllBooks(page = 1, limit = 12) {
 
 export async function getBookById(id: string) {
   try {
+    const userString = localStorage.getItem("user");
+    if (!userString) throw new Error("User not found in localStorage");
+
+    const userObject = JSON.parse(userString);
+    const token = userObject?.user?.token;
+    if (!token) throw new Error("Authentication token not found");
+
     const response = await fetch(`${apiUrl}/${id}`, {
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       cache: "no-store",
     });
 
     const json = await response.json();
-    console.log("📚 Book fetched:", json);
+    console.log("📚 Book fetched:", json.data);
 
     if (!json.success || !json.data) {
       throw new Error("Invalid response");
