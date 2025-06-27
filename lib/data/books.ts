@@ -103,38 +103,59 @@ export async function deleteBook(id: string): Promise<boolean> {
     return false;
   }
 }
+// ///////////////////////////////////////////////////////////
+
+const apiGetStats = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/books/statistics/`;  
 
 export async function getStats() {
-  return [
+  try{
+    const response = await fetch(apiGetStats, {
+     
+      cache: "no-store",
+    });
+    if(!response.ok) {
+      throw new Error("Failed to fetch statistics");
+    }
+    const json = await response.json();
+    if (!json.success) {
+      throw new Error("Invalid response");
+    }
+    console.log("📊 Statistics fetched:", json);
+    return [
     {
       title: "Total Books",
-      value: "1,234",
+      value: json.totalCount,
       change: "+5.3%",
       icon: BookOpen,
       color: "bg-blue-50 text-blue-600",
     },
     {
       title: "Published",
-      value: "987",
+      value: json.publishedCount,
       change: "+8.2%",
       icon: BookOpen,
       color: "bg-green-50 text-green-600",
     },
     {
       title: "Under Review",
-      value: "156",
+      value: json.pendingCount,
       change: "-2.1%",
       icon: Clock,
       color: "bg-yellow-50 text-yellow-600",
     },
     {
       title: "Downloads",
-      value: "45.2K",
+      value: json.totalDownloadCount,
       change: "+12.5%",
       icon: Download,
       color: "bg-purple-50 text-purple-600",
     },
   ];
+  }catch (error){
+    console.error("❌ getStats error:", error);
+    return [];
+  }
+  
 }
 
 export async function getCategories() {

@@ -5,7 +5,7 @@ import {
   getCategories,
   getLanguages,
   getStatuses,
-} from "@/lib/data/books";
+} from "@/lib/data/articles";
 import ArticlesHeeder from "@/components/articles/ArticlesHeeder";
 import ArticleFiltersCard from "@/components/articles/ArticleFiltersCard";
 import ArticlePageClient from "@/components/articles/ArticlesPageClient";
