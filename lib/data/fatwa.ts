@@ -280,37 +280,64 @@ export const submitFatwa = async (values: Fatwa): Promise<boolean> => {
   }
 };
 
+// ////////////////////////////////////////////////////////////////////////
+
+const apiUrlFilter=`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/fatwas/statistics`;
+
 export async function getStats() {
+  try{
+    const response = await fetch(apiUrlFilter, {
+     
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch statistics");
+    }
+
+    const json = await response.json();
+
+    if (!json.success) {
+      throw new Error("Invalid response");
+      console.error("❌ Invalid response:", json);
+    }
+
+    console.log("📊 Statistics fetched:", json);
+  
   return [
     {
       title: "Total Fatwas",
-      value: "1,250",
+      value: json.totalCount,
       change: "+12.5%",
       icon: MessageCircle,
       color: "bg-blue-50 text-blue-600",
     },
     {
-      title: "Category of fatwas",
-      value: "49",
+      title: "Published Fatwas",
+      value: json.publishedCount,
       change: "+8.2%",
       icon: CheckCircle,
       color: "bg-green-50 text-green-600",
     },
     {
       title: "Pending Review",
-      value: "145",
+      value: json.pendingCount,
       change: "-5.1%",
       icon: Clock,
       color: "bg-yellow-50 text-yellow-600",
     },
     {
       title: "Reported",
-      value: "23",
+      value: json.totalReportErrorCount,
       change: "+2.3%",
       icon: Flag,
       color: "bg-red-50 text-red-600",
     },
   ];
+}catch (error){
+    console.error("❌ getStats error:", error);
+    return [];
+  }
 }
 
 export async function getCategories() {
