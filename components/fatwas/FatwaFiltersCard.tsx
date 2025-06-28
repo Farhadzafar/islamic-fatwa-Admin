@@ -7,7 +7,12 @@ import { Card } from "@/components/ui/card";
 import { Filter, Search } from "lucide-react";
 
 type FiltersCardProps = {
-  categories: { name: string; count: number }[];
+  categories: {
+    id: string;
+    pa: string;
+    en: string;
+    ar: string;
+  }[];
   statuses: { value: string; label: string }[];
   languages?: { name: string; code: string }[];
 };
@@ -21,13 +26,19 @@ export default function FatwaFiltersCard({
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedLanguage, setSelectedLanguage] = useState("english");
   const [showFilters, setShowFilters] = useState(false);
+  const [search, setSearch] = useState("");
 
   return (
     <Card className="p-6">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <Input placeholder="Search questions..." className="pl-10" />
+          <Input
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
         </div>
         <div className="flex gap-3">
           <Button
@@ -44,8 +55,8 @@ export default function FatwaFiltersCard({
             className="rounded-md border-gray-300 shadow-sm"
           >
             {categories.map((cat) => (
-              <option key={cat.name} value={cat.name.toLowerCase()}>
-                {cat.name} ({cat.count})
+              <option key={cat.id} value={cat.en.toLowerCase()}>
+                {cat.en}
               </option>
             ))}
           </select>

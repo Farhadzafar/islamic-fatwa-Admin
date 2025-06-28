@@ -6,11 +6,12 @@ import {
   getCategories,
   getLanguages,
   getStatuses,
-} from "@/lib/data/books";
+} from "@/lib/data/research";
 import BooksFiltersCard from "@/components/books/BooksFiltersCard";
 import ResearchPapersList from "@/components/research/ResearchPapersList";
 import { researchPapers } from "@/constants/data";
 import ResearchHeader from "@/components/research/ResearchHeader";
+import ResearchPageClient from "@/components/research/ResearchPageClient";
 
 export default async function page() {
   const stats = await getStats();
@@ -22,12 +23,16 @@ export default async function page() {
     <div className="space-y-8">
       <ResearchHeader />
       <StaticCard stats={stats} />
-      <BooksFiltersCard
+      {/* <BooksFiltersCard
+        categories={categories}
+        languages={languages}
+        statuses={Statuses}
+      /> */}
+      <ResearchPageClient
         categories={categories}
         languages={languages}
         statuses={Statuses}
       />
-      <ResearchPapersList papers={researchPapers} />
     </div>
   );
 }

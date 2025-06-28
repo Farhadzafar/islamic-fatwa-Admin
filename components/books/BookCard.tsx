@@ -36,13 +36,13 @@ export function BookCard({ books, onDelete, onEdit }: BookCardProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {books.map((book, i) => {
-        const imageUrl =
-          book.coverImageUrl && process.env.NEXT_PUBLIC_API_ENDPOINT
-            ? `${process.env.NEXT_PUBLIC_API_ENDPOINT}${book.coverImageUrl.replace(
-                "/public",
-                ""
-              )}`
-            : null;
+        const imageUrl = book.coverImageUrl?.startsWith("http")
+          ? book.coverImageUrl
+          : book.coverImageUrl && process.env.NEXT_PUBLIC_API_ENDPOINT
+          ? `${
+              process.env.NEXT_PUBLIC_API_ENDPOINT
+            }${book.coverImageUrl.replace("/public", "")}`
+          : null;
 
         return (
           <div

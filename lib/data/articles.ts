@@ -3,10 +3,29 @@ import { toast } from "@/hooks/use-toast";
 
 const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/articles`;
 
-export async function getAllArticles(page = 1, limit = 12) {
+export async function getAllArticles(
+  page = 1,
+  limit = 12,
+  filters: {
+    search?: string;
+    language?: string;
+    category?: string;
+    status?: string;
+  } = {}
+) {
+  const {
+    search = "null",
+    language = "all",
+    category = "all",
+    status = "all",
+  } = filters;
+
+  const url = `${apiUrl}/filter?search=${search}&language=${language}&category=${category}&status=${status}&page=${page}&limit=${limit}`;
+
   try {
-    console.log("📚 Fetching Articles from API:", apiUrl);
-    const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
+    console.log("📄 Fetching Articles from API:", url);
+
+    const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -14,7 +33,7 @@ export async function getAllArticles(page = 1, limit = 12) {
     });
 
     const json = await response.json();
-    console.log("📚 Books fetched:", json);
+    console.log("📄 Articles fetched:", json);
 
     if (!json.success || !Array.isArray(json.data)) {
       throw new Error("Invalid response");
@@ -25,8 +44,8 @@ export async function getAllArticles(page = 1, limit = 12) {
       hasMore: json.hasMore,
     };
   } catch (error) {
-    console.error("❌ getAllBooks error:", error);
-    return { books: [], hasMore: false }; // ✅ fixed here
+    console.error("❌ getAllArticles error:", error);
+    return { articles: [], hasMore: false };
   }
 }
 
@@ -137,18 +156,41 @@ export async function getStats() {
 
 export async function getCategories() {
   return [
-    { name: "Fiqh", count: 500 },
-    { name: "Aqeedah", count: 300 },
-    { name: "History", count: 200 },
-    { name: "Islamic Law", count: 150 },
-    { name: "Ethics", count: 100 },
-    { name: "Islamic Finance", count: 50 },
+    {
+      id: "6859544d68b989660de6f629",
+      ps: "واده",
+      en: "Marriage",
+      ar: "الزواج",
+    },
+    { id: "6859544d68b989660de6f62a", ps: "طلاق", en: "Divorce", ar: "الطلاق" },
+    { id: "6859544d68b989660de6f62b", ps: "نماز", en: "Prayer", ar: "الصلاة" },
+    { id: "6859544d68b989660de6f62c", ps: "روژه", en: "Fasting", ar: "الصيام" },
+    { id: "6859544d68b989660de6f62d", ps: "زکات", en: "Zakat", ar: "الزكاة" },
+    { id: "6859544d68b989660de6f63a", ps: "تجارت", en: "Trade", ar: "التجارة" },
+    {
+      id: "6859544d68b989660de6f63b",
+      ps: "خوراک او څښاک",
+      en: "Food & Drink",
+      ar: "الطعام والشراب",
+    },
+    {
+      id: "6859544d68b989660de6f63c",
+      ps: "کورنۍ اړیکې",
+      en: "Family Relations",
+      ar: "العلاقات الأسرية",
+    },
+    {
+      id: "6859544d68b989660de6f643",
+      ps: "میراث",
+      en: "Inheritance",
+      ar: "الميراث",
+    },
+    { id: "6859642f8c140503427e8c57", ps: "نکاح", en: "Nikah", ar: "النكاح" },
   ];
 }
 
 export async function getStatuses() {
   return [
-    { label: "All", value: "all" },
     { label: "Published", value: "published" },
     { label: "Pending", value: "pending" },
     { label: "Draft", value: "draft" },

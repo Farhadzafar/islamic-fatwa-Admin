@@ -1,9 +1,9 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ResearchSchema } from "./Researchchama";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { number, z } from "zod";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -16,81 +16,93 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import MadhabField from "@/components/form/MadhabField";
-import TitleField from "@/components/form/TitleField";
-import ImageFileField from "@/components/form/ImageFileField";
 import CategoryField from "@/components/form/CategoryField";
 import RichTextEditorField from "../form/TextEditorField";
 import { useSearchParams } from "next/navigation";
 import PdfFileField from "../form/PdfFileField";
 import PublishDateField from "../form/publishDateField";
+import { submitResearchData } from "@/lib/data/research";
+import { getUserId } from "@/hooks/userId";
 
 export default function ResearchForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [language, setLanguage] = useState("");
   const searchParams = useSearchParams();
   const lang = searchParams.get("lang") || "en";
-  console.log("language is ===", lang);
-  useEffect(() => {
-    setLanguage(lang || "en");
-  }, [lang]);
+  const userId = getUserId();
+  console.log("value✌️✌️✌️✌️✌️value✌️✌️✌️✌️✌️value✌️✌️✌️✌️✌️", userId);
 
-  const defaultValues = {
+  const defaultValues: z.infer<typeof ResearchSchema> = {
     title: "",
-    citations: "",
-    author: "",
-    authorBio: "",
+    citations: 0,
+    authors: {
+      fullName: "",
+      bio: "",
+      affiliation: "",
+    },
     abstract: "",
-    publishDate: "",
-    file: undefined as File | undefined,
+    publishedDate: new Date().toISOString().split("T")[0],
+    fileUrl: undefined,
     category: "",
-    language: `${lang}`,
+    language: lang,
+    fileSize: "",
+    pageCount: 0,
+    uploadedBy: userId,
   };
+
   const form = useForm<z.infer<typeof ResearchSchema>>({
     resolver: zodResolver(ResearchSchema),
-    defaultValues: defaultValues,
+    defaultValues,
   });
 
   const onSubmit = async (values: z.infer<typeof ResearchSchema>) => {
     setIsSubmitting(true);
-    console.log("Form submitted with values:", values);
-
-    // Simulate upload
-    await new Promise((res) => setTimeout(res, 1000));
-
-    setIsSubmitting(false);
-    // Reset form after submission
-    form.reset(defaultValues);
+    try {
+      const result = await submitResearchData(values);
+      console.log("✅ Upload successful:", result);
+      form.reset(defaultValues);
+    } catch (err) {
+      console.error("❌ Upload failed:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const { control, handleSubmit } = form;
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Research Upload Form</h1>
       <p className="text-sm text-gray-500 mb-4">
-        Please fill out the form below to upload a new research. All fields are
-        required.
+        Please fill out the form below to upload a new research paper.
       </p>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <TitleField form={form} language={language} name="title" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Title */}
+          <FormField
+            control={control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Authors Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <FormField
-              control={form.control}
-              name="citations"
+              control={control}
+              name="authors.fullName"
               render={({ field }) => (
-                <FormItem
-                  className="w-full"
-                  dir={language === "en" ? "ltr" : "rtl"}
-                >
-                  <FormLabel>
-                    {language === "en" ? "citations" : "citations"}
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel>Author Full Name</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      dir={language === "en" ? "ltr" : "rtl"}
-                      className={cn("w-full")}
-                    />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -98,22 +110,13 @@ export default function ResearchForm() {
             />
 
             <FormField
-              control={form.control}
-              name="author"
+              control={control}
+              name="authors.bio"
               render={({ field }) => (
-                <FormItem
-                  className="w-full"
-                  dir={language === "en" ? "ltr" : "rtl"}
-                >
-                  <FormLabel>
-                    {language === "en" ? "author" : "author"}
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel>Author Bio</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      dir={language === "en" ? "ltr" : "rtl"}
-                      className={cn("w-full")}
-                    />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -121,54 +124,96 @@ export default function ResearchForm() {
             />
 
             <FormField
-              control={form.control}
-              name="authorBio"
+              control={control}
+              name="authors.affiliation"
               render={({ field }) => (
-                <FormItem
-                  className="w-full"
-                  dir={language === "en" ? "ltr" : "rtl"}
-                >
-                  <FormLabel>
-                    {language === "en" ? "authorBio" : "authorBio"}
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel>Affiliation</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      dir={language === "en" ? "ltr" : "rtl"}
-                      className={cn("w-full")}
-                    />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            <CategoryField form={form} language={language} name="category" />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <RichTextEditorField
-              form={form}
-              language={language}
-              name="abstract"
-            />
-          </div>
+          {/* Citations */}
+          <FormField
+            control={control}
+            name="citations"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Citations</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === "" ? 0 : +e.target.value
+                      )
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
-            <PdfFileField form={form} language={language} name="file" />
-            <PublishDateField
-              form={form}
-              language={language}
-              name="publishDate"
-            />
-          </div>
+          {/* Abstract */}
+          <RichTextEditorField form={form} language={lang} name="abstract" />
 
-          <div className="flex justify-between items-end">
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200"
-            >
+          {/* Category */}
+          <CategoryField form={form} language={lang} name="category" />
+
+          {/* File Upload */}
+          <PdfFileField form={form} language={lang} name="fileUrl" />
+
+          {/* Publish Date */}
+          <PublishDateField form={form} language={lang} name="publishedDate" />
+
+          {/* File Size */}
+          {/* <FormField
+            control={control}
+            name="fileSize"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>File Size</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g. 2 MB" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+
+          {/* Page Count */}
+          <FormField
+            control={control}
+            name="pageCount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Page Count</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === "" ? 0 : +e.target.value
+                      )
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Submit Button */}
+          <div className="flex justify-end">
+            <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -177,7 +222,7 @@ export default function ResearchForm() {
               ) : (
                 <>
                   <Check className="w-4 h-4 mr-2" />
-                  Submit Book
+                  Submit Research
                 </>
               )}
             </Button>

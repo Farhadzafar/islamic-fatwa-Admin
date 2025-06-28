@@ -1,4 +1,5 @@
 import { toast } from "@/hooks/use-toast";
+import { count } from "console";
 import { CheckCircle, Clock, Flag, MessageCircle } from "lucide-react";
 
 const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/fatwas`;
@@ -34,14 +35,72 @@ export interface Fatwa {
   createdAt: string;
 }
 
-export async function getFatwas(page = 1, limit = 10) {
+// export async function getFatwas(page = 1, limit = 10) {
+//   try {
+//     const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       cache: "no-store",
+//     });
+//     const json = await response.json();
+
+//     if (!json.success || !Array.isArray(json.data)) {
+//       throw new Error("Invalid response");
+//     }
+
+//     console.log("📜 Fatwas fetched:", json.data);
+//     console.log("📜 Has more:", json.hasMore);
+
+//     return {
+//       fatwas: json.data,
+//       hasMore: json.hasMore, // ← مهمه ده
+//     };
+//   } catch (error) {
+//     console.error("❌ getFatwas error:", error);
+//     return { fatwas: [], hasMore: false };
+//   }
+// }
+
+export async function getFatwas(
+  page = 1,
+  limit = 10,
+  filters: {
+    search?: string;
+    category?: string;
+    language?: string;
+    status?: string;
+  } = {}
+) {
   try {
-    const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
+    const params = new URLSearchParams();
+
+    params.set("page", page.toString());
+    params.set("limit", limit.toString());
+
+    // 🧠 Only add filter if it's not "all" or empty
+    if (filters.search && filters.search !== "null") {
+      params.set("search", filters.search);
+    }
+    if (filters.category && filters.category !== "all") {
+      params.set("category", filters.category);
+    }
+    if (filters.language && filters.language !== "all") {
+      params.set("language", filters.language);
+    }
+    if (filters.status && filters.status !== "all") {
+      params.set("status", filters.status);
+    }
+
+    const url = `${apiUrl}/filter?${params.toString()}`;
+
+    const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
       },
       cache: "no-store",
     });
+
     const json = await response.json();
 
     if (!json.success || !Array.isArray(json.data)) {
@@ -53,7 +112,7 @@ export async function getFatwas(page = 1, limit = 10) {
 
     return {
       fatwas: json.data,
-      hasMore: json.hasMore, // ← مهمه ده
+      hasMore: json.hasMore,
     };
   } catch (error) {
     console.error("❌ getFatwas error:", error);
@@ -256,18 +315,41 @@ export async function getStats() {
 
 export async function getCategories() {
   return [
-    { name: "Fiqh", count: 500 },
-    { name: "Aqeedah", count: 300 },
-    { name: "History", count: 200 },
-    { name: "Islamic Law", count: 150 },
-    { name: "Ethics", count: 100 },
-    { name: "Islamic Finance", count: 50 },
+    {
+      id: "6859544d68b989660de6f629",
+      ps: "واده",
+      en: "Marriage",
+      ar: "الزواج",
+    },
+    { id: "6859544d68b989660de6f62a", ps: "طلاق", en: "Divorce", ar: "الطلاق" },
+    { id: "6859544d68b989660de6f62b", ps: "نماز", en: "Prayer", ar: "الصلاة" },
+    { id: "6859544d68b989660de6f62c", ps: "روژه", en: "Fasting", ar: "الصيام" },
+    { id: "6859544d68b989660de6f62d", ps: "زکات", en: "Zakat", ar: "الزكاة" },
+    { id: "6859544d68b989660de6f63a", ps: "تجارت", en: "Trade", ar: "التجارة" },
+    {
+      id: "6859544d68b989660de6f63b",
+      ps: "خوراک او څښاک",
+      en: "Food & Drink",
+      ar: "الطعام والشراب",
+    },
+    {
+      id: "6859544d68b989660de6f63c",
+      ps: "کورنۍ اړیکې",
+      en: "Family Relations",
+      ar: "العلاقات الأسرية",
+    },
+    {
+      id: "6859544d68b989660de6f643",
+      ps: "میراث",
+      en: "Inheritance",
+      ar: "الميراث",
+    },
+    { id: "6859642f8c140503427e8c57", ps: "نکاح", en: "Nikah", ar: "النكاح" },
   ];
 }
 
 export async function getStatuses() {
   return [
-    { label: "All", value: "all" },
     { label: "Published", value: "published" },
     { label: "Pending", value: "pending" },
     { label: "Draft", value: "draft" },

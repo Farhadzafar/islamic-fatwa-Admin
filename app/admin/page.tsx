@@ -60,7 +60,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <ResearchPapersList papers={researchPapers} />
+      {/* <ResearchPapersList papers={researchPapers} /> */}
     </div>
   );
 }

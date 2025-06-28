@@ -3,7 +3,6 @@ import StatsGrid from "@/components/questions/StatsGrid";
 import React from "react";
 import {
   getStats,
-  getFatwas,
   getCategories,
   getLanguages,
   getStatuses,
@@ -20,12 +19,11 @@ export default async function FatwasPage() {
     <div className="space-y-8 p-8">
       <FatwaHeader />
       <StatsGrid stats={stats} />
-      <FatwaFiltersCard
+      <FatwasPageClient
         categories={categories}
         languages={languages}
         statuses={statuses}
       />
-      <FatwasPageClient />
     </div>
   );
 }

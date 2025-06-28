@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       "example.com",
       "images.unsplash.com",
       "cdn.domain.com",
+      "ui-avatars.com",
     ],
   },
 };

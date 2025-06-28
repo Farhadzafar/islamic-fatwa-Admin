@@ -1,6 +1,6 @@
 import BookHeader from "@/components/books/BookHeader";
 import React from "react";
-import { recentBooks } from "@/constants/data";
+
 import { StaticCard } from "@/components/books/StaticCard";
 import {
   getStats,
@@ -21,12 +21,16 @@ export default async function page() {
     <div className="space-y-8">
       <BookHeader />
       <StaticCard stats={stats} />
-      <BooksFiltersCard
+      {/* <BooksFiltersCard
+        categories={categories}
+        languages={languages}
+        statuses={Statuses}
+      /> */}
+      <BookPageClient
         categories={categories}
         languages={languages}
         statuses={Statuses}
       />
-      <BookPageClient />
     </div>
   );
 }

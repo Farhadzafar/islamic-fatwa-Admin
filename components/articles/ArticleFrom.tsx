@@ -45,7 +45,7 @@ export default function ArticleForm() {
     description: "",
     language: lang,
     readTime: 3454,
-    coverImage: undefined,
+    coverImageUrl: undefined,
     category: "",
   };
 
@@ -64,7 +64,8 @@ export default function ArticleForm() {
       formData.append("description", values.description);
       formData.append("language", values.language);
       if (values.category) formData.append("category", values.category);
-      if (values.coverImage) formData.append("coverImage", values.coverImage); // ✅ correct field name
+      if (values.coverImageUrl)
+        formData.append("coverImage", values.coverImageUrl); // ✅ correct field name
 
       console.log(
         "📤 Submitting book data:",
@@ -72,7 +73,7 @@ export default function ArticleForm() {
       );
 
       const apiendpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
-      const response = await fetch(`${apiendpoint}/api/articlas/add`, {
+      const response = await fetch(`${apiendpoint}/api/articles/add`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -122,7 +123,11 @@ export default function ArticleForm() {
             name="description"
           />
           <CategoryField form={form} language={language} name="category" />
-          <ImageFileField form={form} language={language} name="coverImage" />
+          <ImageFileField
+            form={form}
+            language={language}
+            name="coverImageUrl"
+          />
 
           <Button
             type="submit"

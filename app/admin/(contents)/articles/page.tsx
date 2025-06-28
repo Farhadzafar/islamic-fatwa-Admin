@@ -5,7 +5,7 @@ import {
   getCategories,
   getLanguages,
   getStatuses,
-} from "@/lib/data/books";
+} from "@/lib/data/articles";
 import ArticlesHeeder from "@/components/articles/ArticlesHeeder";
 import ArticleFiltersCard from "@/components/articles/ArticleFiltersCard";
 import ArticlePageClient from "@/components/articles/ArticlesPageClient";
@@ -20,14 +20,18 @@ export default async function page() {
     <div className="space-y-8">
       <ArticlesHeeder />
       <StaticCard stats={stats} />
-      <ArticleFiltersCard
+      {/* <ArticleFiltersCard
         categories={categories}
         languages={languages}
         statuses={Statuses}
-      />
+      /> */}
       <div className="py-3">
         <h4>all articles</h4>
-        <ArticlePageClient />
+        <ArticlePageClient
+          categories={categories}
+          languages={languages}
+          statuses={Statuses}
+        />
       </div>
     </div>
   );
