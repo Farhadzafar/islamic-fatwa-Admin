@@ -1,4 +1,64 @@
 import { MessageCircle, CheckCircle, Clock, Flag } from "lucide-react";
+
+const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/questions`;
+
+export async function getAllQuestions(
+  page = 1,
+  limit = 10,
+  filters?: {
+    search?: string;
+    language?: string;
+    category?: string;
+    status?: string;
+  }
+) {
+  try {
+    const queryParams = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+      search: filters?.search?.trim() || "null",
+      language: filters?.language || "all",
+      category: filters?.category || "all",
+      status: filters?.status || "all",
+    });
+
+    const response = await fetch(`${apiUrl}/filter?${queryParams.toString()}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    const json = await response.json();
+
+    if (!json.success || !Array.isArray(json.data)) {
+      throw new Error("Invalid response");
+    }
+    console.log(json.data);
+
+    return {
+      questions: json.data,
+      hasMore: json.hasMore,
+    };
+  } catch (error) {
+    console.error("❌ getAllQuestions error:", error);
+    return { questions: [], hasMore: false };
+  }
+}
+
+export async function deleteQuestion(id: string) {
+  try {
+    const response = await fetch(`${apiUrl}/${id}`, {
+      method: "DELETE",
+    });
+    const json = await response.json();
+    return json.success;
+  } catch (error) {
+    console.error("❌ Failed to delete question:", error);
+    return false;
+  }
+}
+
 export async function getQuestions() {
   return [
     {
@@ -23,21 +83,52 @@ export async function getQuestions() {
 
 export async function getCategories() {
   return [
-    { name: "All", count: 1250 },
-    { name: "Fiqh", count: 450 },
-    { name: "Aqeedah", count: 320 },
-    { name: "Hadith", count: 280 },
-    { name: "Quran", count: 200 },
+    {
+      id: "6859544d68b989660de6f629",
+      ps: "واده",
+      en: "Marriage",
+      ar: "الزواج",
+    },
+    { id: "6859544d68b989660de6f62a", ps: "طلاق", en: "Divorce", ar: "الطلاق" },
+    { id: "6859544d68b989660de6f62b", ps: "نماز", en: "Prayer", ar: "الصلاة" },
+    { id: "6859544d68b989660de6f62c", ps: "روژه", en: "Fasting", ar: "الصيام" },
+    { id: "6859544d68b989660de6f62d", ps: "زکات", en: "Zakat", ar: "الزكاة" },
+    { id: "6859544d68b989660de6f63a", ps: "تجارت", en: "Trade", ar: "التجارة" },
+    {
+      id: "6859544d68b989660de6f63b",
+      ps: "خوراک او څښاک",
+      en: "Food & Drink",
+      ar: "الطعام والشراب",
+    },
+    {
+      id: "6859544d68b989660de6f63c",
+      ps: "کورنۍ اړیکې",
+      en: "Family Relations",
+      ar: "العلاقات الأسرية",
+    },
+    {
+      id: "6859544d68b989660de6f643",
+      ps: "میراث",
+      en: "Inheritance",
+      ar: "الميراث",
+    },
+    { id: "6859642f8c140503427e8c57", ps: "نکاح", en: "Nikah", ar: "النكاح" },
   ];
 }
 
 export async function getStatuses() {
   return [
-    { value: "all", label: "All Statuses" },
-    { value: "pending", label: "Pending" },
-    { value: "answered", label: "Answered" },
-    { value: "review", label: "Under Review" },
-    { value: "rejected", label: "Rejected" },
+    { label: "Published", value: "published" },
+    { label: "Pending", value: "pending" },
+    { label: "Draft", value: "draft" },
+  ];
+}
+
+export async function getLanguages() {
+  return [
+    { name: "English", code: "en" },
+    { name: "Arabic", code: "ar" },
+    { name: "Pashto", code: "ps" },
   ];
 }
 

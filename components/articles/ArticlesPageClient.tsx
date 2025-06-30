@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArticleCard } from "./ArticleCard";
@@ -10,12 +9,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
 type FiltersCardProps = {
-  categories: {
-    id: string;
-    ps: string;
-    en: string;
-    ar: string;
-  }[];
+  categories: { id: string; ps: string; en: string; ar: string }[];
   statuses: { value: string; label: string }[];
   languages?: { name: string; code: string }[];
 };
@@ -26,45 +20,44 @@ const PAGE_LIMIT = 10;
 export default function ArticlePageClient({
   categories,
   statuses,
-  languages,
+  languages = [],
 }: FiltersCardProps) {
+  const router = useRouter();
+  const observerRef = useRef<HTMLDivElement | null>(null);
+
   const [articles, setArticles] = useState<any[]>([]);
   const [page, setPage] = useState(DEFAULT_PAGE);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedLanguage, setSelectedLanguage] = useState("all");
-  const [search, setSearch] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
 
-  const observerRef = useRef<HTMLDivElement | null>(null);
-  const router = useRouter();
+  const [filters, setFilters] = useState({
+    category: "all",
+    language: "all",
+    status: "all",
+    search: "",
+  });
+
+  const [showFilters, setShowFilters] = useState(false);
 
   const fetchArticles = useCallback(
     async (pageToLoad = DEFAULT_PAGE, append = false) => {
       setLoading(true);
       try {
-        const { articles: fetchedArticles, hasMore: more } =
-          await getAllArticles(pageToLoad, PAGE_LIMIT, {
-            category: selectedCategory,
-            language: selectedLanguage,
-            status: selectedStatus,
-            search,
-          });
-
-        setArticles((prev) =>
-          append ? [...prev, ...fetchedArticles] : fetchedArticles
+        const { articles: fetched, hasMore: more } = await getAllArticles(
+          pageToLoad,
+          PAGE_LIMIT,
+          filters
         );
+        setArticles((prev) => (append ? [...prev, ...fetched] : fetched));
         setHasMore(more);
         setPage(pageToLoad);
-      } catch (err) {
-        console.error("❌ Error loading articles:", err);
+      } catch (error) {
+        console.error("❌ Error loading articles:", error);
       } finally {
         setLoading(false);
       }
     },
-    [search, selectedCategory, selectedLanguage, selectedStatus]
+    [filters]
   );
 
   useEffect(() => {
@@ -72,61 +65,62 @@ export default function ArticlePageClient({
   }, [fetchArticles]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && !loading && hasMore) {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !loading && hasMore) {
         fetchArticles(page + 1, true);
       }
     });
-    const sentinel = observerRef.current;
-    if (sentinel) observer.observe(sentinel);
+    const current = observerRef.current;
+    if (current) observer.observe(current);
     return () => {
-      if (sentinel) observer.unobserve(sentinel);
+      if (current) observer.unobserve(current);
     };
   }, [fetchArticles, loading, hasMore, page]);
 
-  const handleDeleteArticle = async (id: string) => {
+  const handleDelete = async (id: string) => {
     const success = await deleteArticle(id);
-    if (success) {
-      setArticles((prev) => prev.filter((a) => a._id !== id));
-    }
+    if (success) setArticles((prev) => prev.filter((a) => a._id !== id));
   };
 
-  const handleEditArticle = (id: string) => {
+  const handleEdit = (id: string) =>
     router.push(`/admin/articles/upload/${id}`);
-  };
 
-  const handleFilterChange = () => {
-    fetchArticles(DEFAULT_PAGE);
-  };
+  const updateFilter = (key: string, value: string) =>
+    setFilters((prev) => ({ ...prev, [key]: value }));
+
+  const debouncedSearch = useCallback(() => {
+    const timeout = setTimeout(() => fetchArticles(DEFAULT_PAGE), 500);
+    return () => clearTimeout(timeout);
+  }, [fetchArticles]);
+
+  useEffect(debouncedSearch, [filters.search]);
 
   return (
     <div className="space-y-8 p-8">
-      <Card className="p-6">
+      <Card className="p-6 space-y-4">
+        {/* Search + Filter */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onBlur={handleFilterChange}
+              value={filters.search}
+              onChange={(e) => updateFilter("search", e.target.value)}
               placeholder="Search articles by title..."
               className="pl-10"
             />
           </div>
+
           <div className="flex gap-3 flex-wrap">
             <Button
               variant="outline"
-              className="gap-2"
               onClick={() => setShowFilters(!showFilters)}
+              className="gap-2"
             >
               <Filter className="w-4 h-4" /> Filters
             </Button>
             <select
-              value={selectedCategory}
-              onChange={(e) => {
-                setSelectedCategory(e.target.value);
-                handleFilterChange();
-              }}
+              value={filters.category}
+              onChange={(e) => updateFilter("category", e.target.value)}
               className="rounded-md border-gray-300 shadow-sm"
             >
               <option value="all">All Categories</option>
@@ -137,26 +131,20 @@ export default function ArticlePageClient({
               ))}
             </select>
             <select
-              value={selectedLanguage}
-              onChange={(e) => {
-                setSelectedLanguage(e.target.value);
-                handleFilterChange();
-              }}
+              value={filters.language}
+              onChange={(e) => updateFilter("language", e.target.value)}
               className="rounded-md border-gray-300 shadow-sm"
             >
               <option value="all">All Languages</option>
-              {languages?.map((lang) => (
+              {languages.map((lang) => (
                 <option key={lang.code} value={lang.code.toLowerCase()}>
                   {lang.name} ({lang.code})
                 </option>
               ))}
             </select>
             <select
-              value={selectedStatus}
-              onChange={(e) => {
-                setSelectedStatus(e.target.value);
-                handleFilterChange();
-              }}
+              value={filters.status}
+              onChange={(e) => updateFilter("status", e.target.value)}
               className="rounded-md border-gray-300 shadow-sm"
             >
               <option value="all">All Statuses</option>
@@ -170,19 +158,24 @@ export default function ArticlePageClient({
         </div>
       </Card>
 
-      {articles.map((article, i) => (
+      {/* Article List */}
+      {articles.map((article) => (
         <ArticleCard
-          key={article._id + i}
+          key={article._id}
           article={article}
-          onDelete={handleDeleteArticle}
-          onEdit={handleEditArticle}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
         />
       ))}
 
+      {/* Load More Sentinel */}
       <div ref={observerRef} className="h-10" />
 
+      {/* Loaders */}
       {loading && (
-        <p className="text-center text-gray-500">Loading more articles...</p>
+        <p className="text-center text-gray-500 animate-pulse">
+          Loading more articles...
+        </p>
       )}
       {!hasMore && !loading && (
         <p className="text-center text-gray-400">

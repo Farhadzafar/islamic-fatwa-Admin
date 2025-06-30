@@ -20,13 +20,7 @@ export default async function page() {
     <div className="space-y-8">
       <ArticlesHeeder />
       <StaticCard stats={stats} />
-      {/* <ArticleFiltersCard
-        categories={categories}
-        languages={languages}
-        statuses={Statuses}
-      /> */}
       <div className="py-3">
-        <h4>all articles</h4>
         <ArticlePageClient
           categories={categories}
           languages={languages}
