@@ -1,7 +1,7 @@
 import { getUserToken } from "@/hooks/getTokn";
 import { getUserId } from "@/hooks/userId";
 import { Users, Activity, UserCheck, UserPlus } from "lucide-react";
-const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users/statistic/`;
+// const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users/statistic/`;
 
 const getUserStatics = async () => {
 try {
@@ -21,7 +21,7 @@ try {
     console.error("❌ getUserStatics error:", error);
     return [];
   }
-
+// 
 }
 
 
