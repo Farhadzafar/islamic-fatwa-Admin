@@ -1,24 +1,51 @@
 // lib/data/users.ts
 import { Users, Activity, UserCheck, UserPlus } from "lucide-react";
+const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users/statistic/`;
+
+const getUserStatics = async () => {
+try {
+    const response = await fetch(apiUrl, {
+      cache: "no-store",
+    });
+
+    const json = await response.json();
+    console.log("📊 User Statistics fetched:", json);
+
+    if (!json.success) {
+      throw new Error("Invalid response");
+    }
+
+    return json.data;
+  } catch (error) {
+    console.error("❌ getUserStatics error:", error);
+    return [];
+  }
+
+}
+
 
 export async function getUserPageData() {
+  console.log("Fetching user statistics...", apiUrl);
+  const usrdata = await getUserStatics();
+console.log("User Data:", usrdata);
   const stats = [
     {
       title: "Total Users",
-      value: "1,250",
+      // value: "1,250",
+      value:` ${usrdata.totalCount || "1,250"}`,
       change: "+12.5%",
       icon: Users,
       color: "bg-blue-50 text-blue-600",
     },
     {
-      title: "Active Today",
+      title: "Total Admins",
       value: "456",
       change: "+5.8%",
       icon: Activity,
       color: "bg-green-50 text-green-600",
     },
     {
-      title: "Verified Users",
+      title: "Total Scholars",
       value: "890",
       change: "+8.2%",
       icon: UserCheck,
@@ -37,7 +64,7 @@ export async function getUserPageData() {
     { value: "all", label: "All Roles", count: 1250 },
     { value: "user", label: "Users", count: 1024 },
     { value: "scholar", label: "Scholars", count: 56 },
-    { value: "moderator", label: "Moderators", count: 12 },
+    // { value: "moderator", label: "Moderators", count: 12 },
     { value: "admin", label: "Administrators", count: 8 },
   ];
 
@@ -45,7 +72,7 @@ export async function getUserPageData() {
     { value: "all", label: "All Statuses" },
     { value: "active", label: "Active" },
     { value: "away", label: "Away" },
-    { value: "suspended", label: "Suspended" },
+    // { value: "suspended", label: "Suspended" },
   ];
 
   const users = [

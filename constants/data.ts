@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 export const areaChartData = [
-  { name: "Jan", questions: 4000, answers: 24000 },
+  { name: "Jan", questions: 6000, answers: 24000 },
   { name: "Feb", questions: 3000, answers: 1398 },
   { name: "Mar", questions: 20000, answers: 9800 },
   { name: "Apr", questions: 2780, answers: 39008 },
