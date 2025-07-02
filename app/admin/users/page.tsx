@@ -3,6 +3,7 @@ import PaginationControls from "@/components/users/Pagination";
 import UserStatsGrid from "@/components/users/StatsGrid";
 import UserFiltersCard from "@/components/users/UserFilters";
 import UserHeader from "@/components/users/UserHeader";
+import UserPageClient from "@/components/users/UserPageClient";
 import UserListCard from "@/components/users/UsersList";
 import { getUserPageData } from "@/lib/data/users";
 export default async function UsersPage() {
@@ -12,9 +13,7 @@ export default async function UsersPage() {
     <div className="space-y-8 p-8">
       <UserHeader />
       <UserStatsGrid stats={stats} />
-      <UserFiltersCard roles={roles} statuses={statuses} />
-      <UserListCard users={users} />
-      <PaginationControls total={1250} />
+      <UserPageClient />
     </div>
   );
 }

@@ -70,3 +70,12 @@ export function truncateString(str: string, maxLength: number): string {
 export function formatNumber(num: number): string {
   return num.toLocaleString();
 }
+
+//
+export const getAvatarUrl = (fullName: string, image?: string): string => {
+  return image && image !== "default-user.jpg"
+    ? `${process.env.NEXT_PUBLIC_API_ENDPOINT}/images/users/${image}`
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        fullName
+      )}&background=random`;
+};

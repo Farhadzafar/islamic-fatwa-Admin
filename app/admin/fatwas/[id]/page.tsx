@@ -25,7 +25,7 @@ export default async function FatwaDetailPage({
 
       <div className="flex flex-wrap gap-3 text-sm">
         <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded">
-          {fatwa.category}
+          {fatwa.category.name}
         </span>
         <span className="bg-green-100 text-green-700 px-3 py-1 rounded">
           {fatwa.status}
@@ -59,7 +59,9 @@ export default async function FatwaDetailPage({
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-gray-400" />
           Date:
-          <span className="font-medium">{formatDate(fatwa.createdAt)}</span>
+          <span className="font-medium">
+            {formatDate(fatwa.createdAt || "")}
+          </span>
         </div>
 
         <div className="flex items-center gap-2">

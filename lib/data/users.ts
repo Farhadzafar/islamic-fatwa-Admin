@@ -1,4 +1,5 @@
-// lib/data/users.ts
+import { getUserToken } from "@/hooks/getTokn";
+import { getUserId } from "@/hooks/userId";
 import { Users, Activity, UserCheck, UserPlus } from "lucide-react";
 const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users/statistic/`;
 
@@ -23,6 +24,80 @@ try {
 
 }
 
+
+const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
+
+// const apiUrl = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/users`;
+
+export async function getAllUsers(
+  page = 1,
+  limit = 10,
+  filters?: {
+    search?: string;
+    role?: string;
+    status?: string;
+  }
+) {
+  try {
+    const token = getUserToken(); // ✅ Get JWT token
+    const adID = getUserId(); // ✅ Admin ID (if required in query)
+
+    if (!token) throw new Error("No token provided");
+
+    const queryParams = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+      search: filters?.search?.trim() || "null",
+      role: filters?.role || "all",
+      status: filters?.status || "all",
+      adID,
+    });
+
+    const response = await fetch(`${apiUrl}/filter?${queryParams.toString()}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ✅ Add token here
+      },
+      cache: "no-store",
+    });
+
+    const json = await response.json();
+    console.log("✅ getAllUsers response:", json);
+
+    if (json.status !== "success" || !Array.isArray(json.data)) {
+      throw new Error("Invalid response from /api/users/filter");
+    }
+
+    return {
+      users: json.data,
+      hasMore: json.hasMore ?? false,
+    };
+  } catch (error) {
+    console.error("❌ getAllUsers error:", error);
+    return { users: [], hasMore: false };
+  }
+}
+
+export async function deleteUser(id: string) {
+  try {
+    const response = await fetch(`${apiUrl}/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const json = await response.json();
+    if (!response.ok || !json.success) {
+      throw new Error(json.message || "Failed to delete user");
+    }
+
+    return true;
+  } catch (err) {
+    console.error("❌ Failed to delete user:", err);
+    return false;
+  }
+}
 
 export async function getUserPageData() {
   console.log("Fetching user statistics...", apiUrl);

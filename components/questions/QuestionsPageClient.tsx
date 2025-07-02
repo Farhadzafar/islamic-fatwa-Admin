@@ -1,64 +1,61 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { BookCard } from "./BookCard";
-import getAllBooks, { deleteBook } from "@/lib/data/books";
-import { Card } from "../ui/card";
-import { Filter, Search } from "lucide-react";
+import QuestionCard from "./QuestionCard";
+import { getAllQuestions, deleteQuestion } from "@/lib/data/qusetions";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-
-const DEFAULT_PAGE = 1;
-const PAGE_LIMIT = 12;
+import { Filter, Search } from "lucide-react";
+import { Card } from "../ui/card";
 
 type FiltersCardProps = {
-  categories: {
-    id: string;
-    ps: string;
-    en: string;
-    ar: string;
-  }[];
+  categories: { id: string; ps: string; en: string; ar: string }[];
   statuses: { value: string; label: string }[];
   languages?: { name: string; code: string }[];
 };
 
-export default function BookPageClient({
+const DEFAULT_PAGE = 1;
+const PAGE_LIMIT = 10;
+
+export default function QuestionPageClient({
   categories,
   statuses,
   languages,
 }: FiltersCardProps) {
-  const [books, setBooks] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<any[]>([]);
   const [page, setPage] = useState(DEFAULT_PAGE);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedLanguage, setSelectedLanguage] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
+
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedLanguage, setSelectedLanguage] = useState("all");
+
+  const [showFilters, setShowFilters] = useState(false);
 
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchBooks = useCallback(
+  const fetchQuestions = useCallback(
     async (pageToLoad = DEFAULT_PAGE, append = false) => {
       setLoading(true);
       try {
-        const { books: fetchedBooks, hasMore: more } = await getAllBooks(
+        const { questions: fetched, hasMore: more } = await getAllQuestions(
           pageToLoad,
           PAGE_LIMIT,
           {
-            category: selectedCategory,
-            language: selectedLanguage,
-            status: selectedStatus,
             search,
+            language: selectedLanguage,
+            category: selectedCategory,
+            status: selectedStatus,
           }
         );
-        setBooks((prev) =>
-          append ? [...prev, ...fetchedBooks] : fetchedBooks
-        );
-        setHasMore(more);
+
+        setQuestions((prev) => (append ? [...prev, ...fetched] : fetched));
         setPage(pageToLoad);
+        setHasMore(more);
       } catch (err) {
-        console.error("❌ Error loading books:", err);
+        console.error("❌ Failed to fetch questions:", err);
       } finally {
         setLoading(false);
       }
@@ -67,35 +64,37 @@ export default function BookPageClient({
   );
 
   useEffect(() => {
-    fetchBooks(DEFAULT_PAGE);
-  }, [fetchBooks]);
+    fetchQuestions(DEFAULT_PAGE);
+  }, [fetchQuestions]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && !loading && hasMore) {
-        fetchBooks(page + 1, true);
+      if (entries[0].isIntersecting && hasMore && !loading) {
+        fetchQuestions(page + 1, true);
       }
     });
+
     const sentinel = observerRef.current;
     if (sentinel) observer.observe(sentinel);
     return () => {
       if (sentinel) observer.unobserve(sentinel);
     };
-  }, [fetchBooks, loading, hasMore, page]);
+  }, [fetchQuestions, loading, hasMore, page]);
 
-  const handleDeleteBook = async (id: string) => {
-    const success = await deleteBook(id);
+  const handleDelete = async (id: string) => {
+    const success = await deleteQuestion(id);
     if (success) {
-      setBooks((prev) => prev.filter((b) => b._id !== id));
+      setQuestions((prev) => prev.filter((q) => q._id !== id));
     }
   };
 
-  const handleEditBook = (id: string) => {
-    console.log("Edit book with ID:", id);
+  const handleEdit = (id: string) => {
+    console.log("✏️ Edit question:", id);
+    // Optionally route or open edit modal
   };
 
   const handleFilterChange = () => {
-    fetchBooks(DEFAULT_PAGE);
+    fetchQuestions(DEFAULT_PAGE);
   };
 
   return (
@@ -108,11 +107,21 @@ export default function BookPageClient({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onBlur={handleFilterChange}
-              placeholder="Search books by title..."
+              placeholder="Search questions..."
               className="pl-10"
             />
           </div>
+
           <div className="flex gap-3 flex-wrap">
+            <Button
+              variant="outline"
+              onClick={() => setShowFilters((prev) => !prev)}
+              className="gap-2"
+            >
+              <Filter className="w-4 h-4" />
+              Filters
+            </Button>
+
             <select
               value={selectedCategory}
               onChange={(e) => {
@@ -128,6 +137,7 @@ export default function BookPageClient({
                 </option>
               ))}
             </select>
+
             <select
               value={selectedLanguage}
               onChange={(e) => {
@@ -138,11 +148,12 @@ export default function BookPageClient({
             >
               <option value="all">All Languages</option>
               {languages?.map((lang) => (
-                <option key={lang.name} value={lang.code.toLowerCase()}>
-                  {lang.name} ({lang.code})
+                <option key={lang.code} value={lang.code.toLowerCase()}>
+                  {lang.name}
                 </option>
               ))}
             </select>
+
             <select
               value={selectedStatus}
               onChange={(e) => {
@@ -162,19 +173,24 @@ export default function BookPageClient({
         </div>
       </Card>
 
-      <BookCard
-        books={books}
-        onDelete={handleDeleteBook}
-        onEdit={handleEditBook}
-      />
+      {questions.map((question, i) => (
+        <QuestionCard
+          key={question._id + i}
+          question={question}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+        />
+      ))}
 
       <div ref={observerRef} className="h-10" />
 
       {loading && (
-        <p className="text-center text-gray-500">Loading more books...</p>
+        <p className="text-center text-gray-500">Loading more questions...</p>
       )}
       {!hasMore && !loading && (
-        <p className="text-center text-gray-400">✅ No more books to load.</p>
+        <p className="text-center text-gray-400">
+          ✅ No more questions to load.
+        </p>
       )}
     </div>
   );
