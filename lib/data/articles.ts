@@ -58,7 +58,7 @@ export async function getArticlesId(id: string) {
     const token = userObject?.user?.token;
     if (!token) throw new Error("Authentication token not found");
 
-    const response = await fetch(`${apiUrl}/${id}`, {
+    const response = await fetch(`${apiUrl}/profile/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -122,7 +122,7 @@ export async function deleteArticle(id: string): Promise<boolean> {
 }
 // /////////////////////////////////////////////////////////////////
 
- const apiGetStats = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/articles/statistics/`;
+const apiGetStats = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/articles/statistics/`;
 export async function getStats() {
   try {
     const response = await fetch(apiGetStats, {
@@ -136,41 +136,39 @@ export async function getStats() {
       throw new Error("Invalid response");
     }
     return [
-    {
-      title: "Total Articles",
-      value: json.totalCount,
-      change: "+5.3%",
-      icon: BookOpen,
-      color: "bg-blue-50 text-blue-600",
-    },
-    {
-      title: "Published",
-      value: json.publishedCount,
-      change: "+8.2%",
-      icon: BookOpen,
-      color: "bg-green-50 text-green-600",
-    },
-    {
-      title: "Under Review",
-      value: json.draftCount,
-      change: "-2.1%",
-      icon: Clock,
-      color: "bg-yellow-50 text-yellow-600",
-    },
-    {
-      title: "Total Views",
-      value: json.totalViews,
-      change: "+12.5%",
-      icon: Download,
-      color: "bg-purple-50 text-purple-600",
-    },
-  ];
-    
+      {
+        title: "Total Articles",
+        value: json.totalCount,
+        change: "+5.3%",
+        icon: BookOpen,
+        color: "bg-blue-50 text-blue-600",
+      },
+      {
+        title: "Published",
+        value: json.publishedCount,
+        change: "+8.2%",
+        icon: BookOpen,
+        color: "bg-green-50 text-green-600",
+      },
+      {
+        title: "Under Review",
+        value: json.draftCount,
+        change: "-2.1%",
+        icon: Clock,
+        color: "bg-yellow-50 text-yellow-600",
+      },
+      {
+        title: "Total Views",
+        value: json.totalViews,
+        change: "+12.5%",
+        icon: Download,
+        color: "bg-purple-50 text-purple-600",
+      },
+    ];
   } catch (error) {
     console.error("❌ getStats error:", error);
     return []; // Return an empty array if there's an error
   }
-  
 }
 
 export async function getCategories() {
