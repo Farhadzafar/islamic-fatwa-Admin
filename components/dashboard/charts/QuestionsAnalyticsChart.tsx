@@ -26,9 +26,9 @@ export default function QuestionsAnalyticsChart({ data }: { data: any[] }) {
           <Button variant="outline" size="sm">
             <Filter className="w-4 h-4 mr-2" /> Filter
           </Button>
-          <Button variant="outline" size="sm">
+          {/* <Button variant="outline" size="sm">
             <Download className="w-4 h-4" />
-          </Button>
+          </Button> */}
         </div>
       </div>
       <div className="h-80">

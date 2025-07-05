@@ -68,10 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user, pathname, isLoading, router, toast]);
 
   const apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
-  console.log("apiend pint is ", apiEndpoint)
-
-
-
+  console.log("apiend pint is ", apiEndpoint);
 
   const login = async (email: string, password: string) => {
     // const url = `${apiEndpoint}/api/users/login`;
@@ -110,7 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Login error:", error);
       toast({
         title: "Login failed",
-        description:"An unexpected error occurred",
+        description: "An unexpected error occurred",
         variant: "destructive",
       });
       return false;
@@ -122,10 +119,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signup = async (data: SignupData) => {
     try {
       setIsLoading(true);
-      // Since the dummy API doesn't have real signup, we'll simulate it
-      // In a real app, you would call an actual API endpoint
-
-      // For demo purposes, we'll just delay to simulate an API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       toast({

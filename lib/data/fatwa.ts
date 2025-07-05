@@ -282,12 +282,11 @@ export const submitFatwa = async (values: Fatwa): Promise<boolean> => {
 
 // ////////////////////////////////////////////////////////////////////////
 
-const apiUrlFilter=`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/fatwas/statistics`;
+const apiUrlFilter = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/fatwas/statistics`;
 
 export async function getStats() {
-  try{
+  try {
     const response = await fetch(apiUrlFilter, {
-     
       cache: "no-store",
     });
 
@@ -302,39 +301,39 @@ export async function getStats() {
       console.error("❌ Invalid response:", json);
     }
 
-    console.log("📊 Statistics fetched:", json);
-  
-  return [
-    {
-      title: "Total Fatwas",
-      value: json.totalCount,
-      change: "+12.5%",
-      icon: MessageCircle,
-      color: "bg-blue-50 text-blue-600",
-    },
-    {
-      title: "Published Fatwas",
-      value: json.publishedCount,
-      change: "+8.2%",
-      icon: CheckCircle,
-      color: "bg-green-50 text-green-600",
-    },
-    {
-      title: "Pending Review",
-      value: json.pendingCount,
-      change: "-5.1%",
-      icon: Clock,
-      color: "bg-yellow-50 text-yellow-600",
-    },
-    {
-      title: "Reported",
-      value: json.totalReportErrorCount,
-      change: "+2.3%",
-      icon: Flag,
-      color: "bg-red-50 text-red-600",
-    },
-  ];
-}catch (error){
+    console.log("📊 Statistics fetched: 🚟🚟🛸🛸🛸🛸🛸", json);
+
+    return [
+      {
+        title: "Total Fatwas",
+        value: json.totalCount,
+        change: "+12.5%",
+        icon: MessageCircle,
+        color: "bg-blue-50 text-blue-600",
+      },
+      {
+        title: "Published Fatwas",
+        value: json.publishedCount,
+        change: "+8.2%",
+        icon: CheckCircle,
+        color: "bg-green-50 text-green-600",
+      },
+      {
+        title: "Pending Review",
+        value: json.pendingCount,
+        change: "-5.1%",
+        icon: Clock,
+        color: "bg-yellow-50 text-yellow-600",
+      },
+      {
+        title: "Reported",
+        value: json.rejectedCount,
+        change: "+2.3%",
+        icon: Flag,
+        color: "bg-red-50 text-red-600",
+      },
+    ];
+  } catch (error) {
     console.error("❌ getStats error:", error);
     return [];
   }

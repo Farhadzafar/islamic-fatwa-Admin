@@ -18,7 +18,9 @@ export default function UserActivityChart({ data }: { data: any[] }) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-semibold">User Activity</h2>
-          <p className="text-sm text-gray-500">Active users over time</p>
+          <p className="text-sm text-gray-500">
+            Active and inactive users over time
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -39,11 +41,17 @@ export default function UserActivityChart({ data }: { data: any[] }) {
             <Legend />
             <Line
               type="monotone"
-              dataKey="questions"
-              stroke="#8884d8"
-              activeDot={{ r: 8 }}
+              dataKey="active"
+              stroke="#4f46e5"
+              strokeWidth={2}
+              activeDot={{ r: 6 }}
             />
-            <Line type="monotone" dataKey="answers" stroke="#82ca9d" />
+            <Line
+              type="monotone"
+              dataKey="inactive"
+              stroke="#f97316"
+              strokeWidth={2}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
